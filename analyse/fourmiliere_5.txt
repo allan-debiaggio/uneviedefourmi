@@ -1,0 +1,23 @@
+Analyse du fichier fourmiliere_quatre.txt
+
+- Nombre de fourmis : 10
+- Salles : S1 {2}, S2, S3, S4 {2}, S5, S6
+- Salle de départ : Sv
+- Salle d'arrivée : Sd
+- Connexions :
+    - S3 - S4
+    - Sv - S1
+    - S1 - S2
+    - S2 - S4
+    - S4 - S5
+    - S5 - Sd
+    - S4 - S6
+    - S6 - Sd
+    - S1 - S3
+
+Structure du graphe :
+Graphe avec embranchements et capacités sur certaines salles (S1 et S4). Plusieurs chemins possibles, dont :
+- Sv → S1 → S2 → S4 → S5 → Sd
+- Sv → S1 → S3 → S4 → S6 → Sd
+
+La gestion des capacités est importante pour éviter la congestion. Il faut répartir les fourmis intelligemment. 

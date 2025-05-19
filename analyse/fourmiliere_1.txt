@@ -1,0 +1,15 @@
+Analyse du fichier fourmiliere_un.txt
+
+- Nombre de fourmis : 5
+- Salles : S1, S2
+- Salle de départ : Sv
+- Salle d'arrivée : Sd
+- Connexions :
+    - Sv - S1
+    - S1 - S2
+    - S2 - Sd
+
+Structure du graphe :
+Sv → S1 → S2 → Sd
+
+Il s'agit d'un graphe linéaire, sans embranchement ni cycle. Il n'y a qu'un seul chemin possible pour les fourmis, qui devront toutes passer par S1 puis S2 pour atteindre Sd. La gestion est simple, il n'y a pas de risque de congestion ni de choix de chemin. 

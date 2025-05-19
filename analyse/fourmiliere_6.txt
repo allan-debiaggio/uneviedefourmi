@@ -1,0 +1,30 @@
+Analyse du fichier fourmiliere_cinq.txt
+
+- Nombre de fourmis : 50
+- Salles : S1 {8}, S2 {4}, S3 {2}, S4 {4}, S5 {2}, S6 {4}, S7 {2}, S8 {5}, S9, S10, S11, S12, S13 {4}, S14 {2}
+- Salle de départ : Sv
+- Salle d'arrivée : Sd
+- Connexions :
+    - S1 - S2
+    - S2 - S3
+    - S3 - S4
+    - S4 - Sd
+    - Sv - S1
+    - S2 - S5
+    - S5 - S4
+    - S13 - Sd
+    - S8 - S12
+    - S12 - S13
+    - S6 - S7
+    - S7 - S9
+    - S9 - S14
+    - S14 - Sd
+    - S7 - S10
+    - S10 - S14
+    - S1 - S6
+    - S6 - S8
+    - S8 - S11
+    - S11 - S13
+
+Structure du graphe :
+Graphe complexe avec de nombreuses salles et capacités. Plusieurs chemins parallèles et possibilités de cycles. La gestion des flux et des capacités est cruciale pour éviter les embouteillages et optimiser le temps de passage des fourmis. Il est nécessaire d'utiliser des algorithmes avancés pour la répartition et la gestion des mouvements. 

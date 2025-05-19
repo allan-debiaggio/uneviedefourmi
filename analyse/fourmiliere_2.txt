@@ -1,0 +1,18 @@
+Analyse du fichier fourmiliere_zero.txt
+
+- Nombre de fourmis : 2
+- Salles : S1, S2
+- Salle de départ : Sv
+- Salle d'arrivée : Sd
+- Connexions :
+    - Sv - S1
+    - Sv - S2
+    - S1 - Sd
+    - S2 - Sd
+
+Structure du graphe :
+Deux chemins parallèles :
+- Sv → S1 → Sd
+- Sv → S2 → Sd
+
+Les fourmis peuvent se répartir sur deux chemins indépendants, ce qui permet d'éviter la congestion. Il n'y a pas de cycle, la gestion est simple. 

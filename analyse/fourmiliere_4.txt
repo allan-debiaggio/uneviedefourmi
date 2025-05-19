@@ -1,0 +1,19 @@
+Analyse du fichier fourmiliere_trois.txt
+
+- Nombre de fourmis : 5
+- Salles : S1, S2, S3, S4
+- Salle de départ : Sv
+- Salle d'arrivée : Sd
+- Connexions :
+    - Sv - S1
+    - S1 - S2
+    - S4 - Sd
+    - S1 - S4
+    - S2 - S3
+
+Structure du graphe :
+Plusieurs chemins possibles, dont :
+- Sv → S1 → S2 → S3
+- Sv → S1 → S4 → Sd
+
+Le graphe offre des embranchements, ce qui permet de répartir les fourmis sur différents chemins. Il n'y a pas de cycle évident, mais il faut vérifier les possibilités de blocage selon la répartition. 

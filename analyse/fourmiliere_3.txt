@@ -1,0 +1,16 @@
+Analyse du fichier fourmiliere_deux.txt
+
+- Nombre de fourmis : 5
+- Salles : S1, S2
+- Salle de départ : Sv
+- Salle d'arrivée : Sd
+- Connexions :
+    - Sv - S1
+    - S1 - S2
+    - S2 - Sd
+    - Sd - Sv
+
+Structure du graphe :
+Cycle présent : Sv → S1 → S2 → Sd → Sv
+
+Il existe un cycle dans le graphe, ce qui peut entraîner des boucles infinies si l'algorithme ne gère pas les cycles. Il faut donc prévoir une détection de cycle pour éviter que les fourmis ne tournent en rond. 

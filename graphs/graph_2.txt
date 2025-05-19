@@ -1,0 +1,6 @@
+digraph fourmiliere_2 {
+    Sv -> S1;
+    Sv -> S2;
+    S1 -> Sd;
+    S2 -> Sd;
+} 
