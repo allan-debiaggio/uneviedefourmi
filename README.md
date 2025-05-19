@@ -30,9 +30,9 @@ f3 - S1 - Sd
   
 ### Problèmes ❔
   
-- Les problèmes à résoudre seront les suivants :
+Les problèmes à résoudre seront les suivants :
   
-- Fourmilière 0 🐜
+- Fourmilière 0 🐜  
 f=2  
 S1  
 S2  
@@ -41,7 +41,7 @@ Sv - S2
 S1 - Sd  
 S2 - Sd  
   
-- Fourmilière 1 🐜
+- Fourmilière 1 🐜  
 f=5  
 S1  
 S2  
@@ -49,7 +49,7 @@ Sv - S1
 S1 - S2  
 S2 - Sd  
 
-- Fourmilière 2 🐜
+- Fourmilière 2 🐜  
 f=5  
 S1  
 S2  
@@ -58,7 +58,7 @@ S1 - S2
 S2 - Sd  
 Sd - Sv  
   
-- Fourmilière 3 🐜
+- Fourmilière 3 🐜  
 f=5  
 S1  
 S2  
@@ -70,25 +70,25 @@ S4 - Sd
 S1 - S4  
 S2 - S3  
   
-- Fourmilière 4 🐜
-f=10
-S1 { 2 }
-S2
-S3
-S4 { 2 }
-S5
-S6
-S3 - S4
-Sv - S1
-S1 - S2
-S2 - S4
-S4 - S5
-S5 - Sd
-S4 - S6
-S6 - Sd
-S1 - S3
+- Fourmilière 4 🐜  
+f=10  
+S1 { 2 }  
+S2  
+S3  
+S4 { 2 }  
+S5  
+S6  
+S3 - S4  
+Sv - S1  
+S1 - S2  
+S2 - S4  
+S4 - S5  
+S5 - Sd  
+S4 - S6  
+S6 - Sd  
+S1 - S3  
   
-- Fourmilière 5 🐜
+- Fourmilière 5 🐜  
 f=50  
 S1 { 8 }  
 S2 { 4 }  
