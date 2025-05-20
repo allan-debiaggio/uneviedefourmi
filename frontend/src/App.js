@@ -104,17 +104,20 @@ function FourmiliereScene({ ants, step }) {
   );
 }
 
-function useAntsAnimation() {
+export default function App() {
   const [ants, setAnts] = useState(initialAnts);
   const [step, setStep] = useState(0);
+  const [running, setRunning] = useState(false);
+  const [hasStarted, setHasStarted] = useState(false);
+  const intervalRef = useRef();
 
+  // Animation logic with controls
   useEffect(() => {
-    const interval = setInterval(() => {
+    if (!running) return;
+    intervalRef.current = setInterval(() => {
       setAnts((prevAnts) => {
-        // Occupation dynamique : inclut les fourmis en mouvement vers la salle suivante
         const occupation = { S1: null, S2: null };
         prevAnts.forEach((ant) => {
-          // Si une fourmi est en train d'arriver dans une salle, on la considère comme occupant la salle cible
           if (ant.moving && ant.position < path.length - 1) {
             const nextRoom = path[ant.position + 1];
             if (nextRoom === 'S1') occupation.S1 = ant.id;
@@ -131,7 +134,6 @@ function useAntsAnimation() {
           if (ant.position < path.length - 1) {
             const nextRoom = path[ant.position + 1];
             if (!ant.moving) {
-              // Vérifier si la salle suivante est libre (Sd toujours libre)
               const nextFree =
                 nextRoom === 'Sd' ||
                 (nextRoom === 'S1' && occupation.S1 === null) ||
@@ -139,19 +141,15 @@ function useAntsAnimation() {
               if (nextFree) {
                 ant.moving = true;
                 ant.moveStartTime = now;
-                // Libérer la salle actuelle
                 if (path[ant.position] === 'S1') occupation.S1 = null;
                 if (path[ant.position] === 'S2') occupation.S2 = null;
-                // Occuper la salle cible dès le début du mouvement
                 if (nextRoom === 'S1') occupation.S1 = ant.id;
                 if (nextRoom === 'S2') occupation.S2 = ant.id;
               }
             } else {
-              // Animation fluide sur 1 seconde
               const elapsed = (now - ant.moveStartTime) / 1000;
               ant.progress = Math.min(elapsed / 1, 1);
               if (ant.progress >= 1) {
-                // Arrivé dans la nouvelle salle
                 ant.position++;
                 ant.progress = 0;
                 ant.moving = false;
@@ -164,20 +162,70 @@ function useAntsAnimation() {
       });
       setStep((s) => s + 1);
     }, 30);
-    return () => clearInterval(interval);
-  }, []);
+    return () => clearInterval(intervalRef.current);
+  }, [running]);
 
-  return [ants, step];
-}
+  // Start button handler
+  const handleStart = () => {
+    setHasStarted(true);
+    setRunning(true);
+  };
+  // Resume button handler
+  const handleResume = () => setRunning(true);
+  // Replay button handler
+  const handleReplay = () => {
+    setAnts(initialAnts.map(a => ({ ...a }))); // reset ants
+    setStep(0);
+    setHasStarted(false);
+    setRunning(false);
+  };
+  // Pause button handler
+  const handlePause = () => setRunning(false);
 
-export default function App() {
-  const [ants, step] = useAntsAnimation();
   return (
     <div style={{ width: '100vw', height: '100vh', background: 'linear-gradient(#a3d9a5, #e0ffe0)' }}>
       <h2 style={{ position: 'absolute', left: 20, top: 10, color: '#234', zIndex: 10 }}>
         Fourmilière 1 – Simulation (React + Three.js)
       </h2>
+      <div style={{ position: 'absolute', left: 20, top: 100, zIndex: 10, display: 'flex', gap: 10 }}>
+        {!hasStarted && (
+          <button onClick={handleStart} style={buttonStyle} title="Start">
+            <span role="img" aria-label="start">▶️</span>
+          </button>
+        )}
+        {hasStarted && running && (
+          <button onClick={handlePause} style={buttonStyle} title="Pause">
+            <span role="img" aria-label="pause">⏸️</span>
+          </button>
+        )}
+        {hasStarted && !running && (
+          <button onClick={handleResume} style={buttonStyle} title="Resume">
+            <span role="img" aria-label="resume">▶️</span>
+          </button>
+        )}
+        <button onClick={handleReplay} style={buttonStyle} title="Replay">
+          <span role="img" aria-label="replay">🔄</span>
+        </button>
+      </div>
       <FourmiliereScene ants={ants} step={step} />
     </div>
   );
 }
+
+// Style pour les boutons verts arrondis
+const buttonStyle = {
+  background: 'linear-gradient(90deg, #4caf50 60%, #81c784 100%)',
+  color: 'white',
+  border: 'none',
+  borderRadius: '50%',
+  width: 48,
+  height: 48,
+  fontSize: 28,
+  boxShadow: '0 2px 8px #0002',
+  cursor: 'pointer',
+  outline: 'none',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  transition: 'background 0.2s',
+};
