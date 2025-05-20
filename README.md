@@ -26,6 +26,7 @@ f3 - S1 - Sd
 - Les salles de la fourmilière ne peuvent accueillir qu'une fourmi à la fois (en dehors du vestibule et dortoir, sauf si spécifié autrement)
 - Une fourmi ne peut s'engager dans un tunnel que si la salle de destination est vide (en dehors du dortoir) ou si la fourmi qui l'occupe est en train de partir.
 - Les tunnels sont traversés instantanément par les fourmis. C'est une fourmilière à trous de ver. Stylé. 😎
+- Les tunnels n'ont pas de limite de fourmis, tant que les salles d'accueil ont la possibilité de les accueillir.
 - L'intégralité des fourmis doivent rejoindre le dortoir en un minimum d'étapes.
   
 ### Problèmes ❔
