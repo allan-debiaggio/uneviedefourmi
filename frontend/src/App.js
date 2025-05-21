@@ -419,6 +419,111 @@ function FourmiliereSceneF3({ ants }) {
   );
 }
 
+// --- Fourmiliere 4 (F4) ---
+const roomPositionsF4 = {
+  Sv: [0, 1, 0],
+  S1: [2, 1, 0],
+  S2: [3.5, 2, 0],
+  S3: [5, 2.5, 0],
+  S4: [3.5, 0, 0],
+  Sd: [5, 0, 0],
+};
+const roomsF4 = [
+  { id: 'Sv', color: 'green' },
+  { id: 'S1', color: 'blue' },
+  { id: 'S2', color: 'blue' },
+  { id: 'S3', color: 'blue' },
+  { id: 'S4', color: 'blue' },
+  { id: 'Sd', color: 'red' },
+];
+const edgesF4 = [
+  ['Sv', 'S1'],
+  ['S1', 'S2'],
+  ['S2', 'S3'],
+  ['S1', 'S4'],
+  ['S4', 'Sd'],
+];
+const pathF4_deadend = ['Sv', 'S1', 'S2', 'S3'];
+const pathF4_valid = ['Sv', 'S1', 'S4', 'Sd'];
+const initialAntsF4 = [
+  { id: 1, chemin: 0, position: 0, progress: 0, moving: false, moveStartTime: null, retour: false, arrivee: false },
+  { id: 2, chemin: 1, position: 0, progress: 0, moving: false, moveStartTime: null, retour: false, arrivee: false },
+  { id: 3, chemin: 1, position: 0, progress: 0, moving: false, moveStartTime: null, retour: false, arrivee: false },
+  { id: 4, chemin: 1, position: 0, progress: 0, moving: false, moveStartTime: null, retour: false, arrivee: false },
+  { id: 5, chemin: 1, position: 0, progress: 0, moving: false, moveStartTime: null, retour: false, arrivee: false },
+];
+
+function AntF4({ ant }) {
+  // Animate both forward and backward (retour) for dead-end ant
+  let path = ant.chemin === 0 ? pathF4_deadend : pathF4_valid;
+  let from, to;
+  if (ant.chemin === 0 && ant.retour) {
+    // Returning: move backward
+    from = roomPositionsF4[path[ant.position]];
+    to = ant.position > 0 ? roomPositionsF4[path[ant.position - 1]] : from;
+  } else {
+    // Moving forward
+    from = roomPositionsF4[path[ant.position]];
+    to = ant.position < path.length - 1 ? roomPositionsF4[path[ant.position + 1]] : from;
+  }
+  const progress = ant.progress || 0;
+  const pos = [
+    from[0] + (to[0] - from[0]) * progress,
+    from[1] + (to[1] - from[1]) * progress,
+    from[2] + (to[2] - from[2]) * progress,
+  ];
+  return (
+    <mesh position={pos}>
+      <sphereGeometry args={[0.25, 32, 32]} />
+      <meshStandardMaterial color="red" emissive="red" />
+    </mesh>
+  );
+}
+
+function FourmiliereSceneF4({ ants }) {
+  return (
+    <Canvas camera={{ position: [3, 2, 10], fov: 50 }} shadows>
+      <ambientLight intensity={0.7} />
+      <directionalLight position={[10, 10, 10]} intensity={0.7} castShadow />
+      {/* sol */}
+      <mesh position={[3, -0.5, 0]} receiveShadow>
+        <boxGeometry args={[8, 0.1, 5]} />
+        <meshStandardMaterial color="#225522" />
+      </mesh>
+      {/* rooms */}
+      {roomsF4.map((room) => (
+        <mesh key={room.id} position={roomPositionsF4[room.id]} castShadow>
+          <sphereGeometry args={[0.5, 32, 32]} />
+          <meshStandardMaterial color={room.color} />
+        </mesh>
+      ))}
+      {/* edges */}
+      {edgesF4.map(([from, to], i) => {
+        const p1 = roomPositionsF4[from];
+        const p2 = roomPositionsF4[to];
+        return (
+          <line key={i}>
+            <bufferGeometry>
+              <bufferAttribute
+                attach="attributes-position"
+                count={2}
+                array={new Float32Array([...p1, ...p2])}
+                itemSize={3}
+              />
+            </bufferGeometry>
+            <lineBasicMaterial color="white" linewidth={2} />
+          </line>
+        );
+      })}
+      {/* ants */}
+      {ants.map((ant) => (
+        <AntF4 key={ant.id} ant={ant} />
+      ))}
+      <OrbitControls />
+    </Canvas>
+  );
+}
+
 export default function App() {
   const [page, setPage] = useState('menu'); // 'menu' ou numéro de fourmilière
   const [ants, setAnts] = useState(initialAnts);
@@ -440,6 +545,13 @@ export default function App() {
   const [runningF3, setRunningF3] = useState(false);
   const [hasStartedF3, setHasStartedF3] = useState(false);
   const intervalRefF3 = useRef();
+
+  // F4 state
+  const [antsF4, setAntsF4] = useState(initialAntsF4.map(a => ({ ...a })));
+  const [stepF4, setStepF4] = useState(0);
+  const [runningF4, setRunningF4] = useState(false);
+  const [hasStartedF4, setHasStartedF4] = useState(false);
+  const intervalRefF4 = useRef();
 
   // Animation logic with controls
   useEffect(() => {
@@ -603,6 +715,124 @@ export default function App() {
     return () => clearInterval(intervalRefF3.current);
   }, [runningF3]);
 
+  // F4 animation logic
+  useEffect(() => {
+    if (!runningF4) return;
+    intervalRefF4.current = setInterval(() => {
+      setAntsF4((prevAnts) => {
+        // occupation: 0=S1, 1=S2, 2=S3, 3=S4
+        const occupation = [null, null, null, null];
+        prevAnts.forEach((ant) => {
+          const path = ant.chemin === 0 ? pathF4_deadend : pathF4_valid;
+          if (ant.arrivee) return;
+          if (ant.chemin === 0 && ant.retour && ant.position > 0 && ant.moving) {
+            // Returning: mark previous room as occupied
+            const prevRoom = path[ant.position - 1];
+            const idx = salleIndexF4(prevRoom);
+            if (idx !== -1) occupation[idx] = ant.id;
+          } else if (ant.moving && ant.position < path.length - 1 && !(ant.chemin === 0 && ant.retour)) {
+            // Forward
+            const nextRoom = path[ant.position + 1];
+            const idx = salleIndexF4(nextRoom);
+            if (idx !== -1) occupation[idx] = ant.id;
+          } else {
+            const idx = salleIndexF4(path[ant.position]);
+            if (idx !== -1 && !ant.moving) occupation[idx] = ant.id;
+          }
+        });
+        const now = Date.now();
+        const newAnts = [...prevAnts];
+        for (let i = 0; i < newAnts.length; ++i) {
+          const ant = newAnts[i];
+          if (ant.arrivee) continue;
+          let path = ant.chemin === 0 ? pathF4_deadend : pathF4_valid;
+          if (ant.chemin === 0 && !ant.retour) {
+            // Dead-end path, going forward
+            if (ant.position < path.length - 1 && !ant.moving) {
+              const nextRoom = path[ant.position + 1];
+              const idxNext = salleIndexF4(nextRoom);
+              if (idxNext === -1 || occupation[idxNext] === null) {
+                const idxCur = salleIndexF4(path[ant.position]);
+                if (idxCur !== -1) occupation[idxCur] = null;
+                ant.moving = true;
+                ant.moveStartTime = now;
+                if (idxNext !== -1) occupation[idxNext] = ant.id;
+              }
+            }
+          } else if (ant.chemin === 0 && ant.retour) {
+            // Returning from dead-end
+            if (ant.position > 0 && !ant.moving) {
+              const prevRoom = path[ant.position - 1];
+              const idxPrev = salleIndexF4(prevRoom);
+              if (idxPrev === -1 || occupation[idxPrev] === null) {
+                const idxCur = salleIndexF4(path[ant.position]);
+                if (idxCur !== -1) occupation[idxCur] = null;
+                ant.moving = true;
+                ant.moveStartTime = now;
+                if (idxPrev !== -1) occupation[idxPrev] = ant.id;
+              }
+            }
+          } else if (ant.chemin === 1) {
+            // Valid path
+            if (ant.position < path.length - 1 && !ant.moving) {
+              const nextRoom = path[ant.position + 1];
+              const idxNext = salleIndexF4(nextRoom);
+              if (nextRoom === 'Sd' || (idxNext !== -1 && occupation[idxNext] === null)) {
+                const idxCur = salleIndexF4(path[ant.position]);
+                if (idxCur !== -1) occupation[idxCur] = null;
+                ant.moving = true;
+                ant.moveStartTime = now;
+                if (nextRoom !== 'Sd' && idxNext !== -1) occupation[idxNext] = ant.id;
+              }
+            }
+          }
+        }
+        // Animate movement
+        for (let i = 0; i < newAnts.length; ++i) {
+          const ant = newAnts[i];
+          if (ant.arrivee) continue;
+          let path = ant.chemin === 0 ? pathF4_deadend : pathF4_valid;
+          if (ant.moving) {
+            const elapsed = (Date.now() - ant.moveStartTime) / 1000;
+            ant.progress = Math.min(elapsed / 1, 1);
+            if (ant.progress >= 1) {
+              if (ant.chemin === 0 && !ant.retour) {
+                ant.position++;
+                ant.progress = 0;
+                ant.moving = false;
+                ant.moveStartTime = null;
+                if (path[ant.position] === 'S3') {
+                  ant.retour = true;
+                }
+              } else if (ant.chemin === 0 && ant.retour) {
+                ant.position--;
+                ant.progress = 0;
+                ant.moving = false;
+                ant.moveStartTime = null;
+                if (path[ant.position] === 'Sv') {
+                  ant.chemin = 1;
+                  ant.position = 0;
+                  ant.retour = false;
+                }
+              } else if (ant.chemin === 1) {
+                ant.position++;
+                ant.progress = 0;
+                ant.moving = false;
+                ant.moveStartTime = null;
+                if (path[ant.position] === 'Sd') {
+                  ant.arrivee = true;
+                }
+              }
+            }
+          }
+        }
+        return newAnts.map((a) => ({ ...a }));
+      });
+      setStepF4((s) => s + 1);
+    }, 30);
+    return () => clearInterval(intervalRefF4.current);
+  }, [runningF4]);
+
   // Start button handler
   const handleStart = () => {
     setHasStarted(true);
@@ -647,6 +877,31 @@ export default function App() {
     setRunningF3(false);
   };
   const handlePauseF3 = () => setRunningF3(false);
+
+  // F4 controls
+  const handleStartF4 = () => {
+    setHasStartedF4(true);
+    setRunningF4(true);
+  };
+  const handleResumeF4 = () => setRunningF4(true);
+  const handleReplayF4 = () => {
+    setAntsF4(initialAntsF4.map(a => ({ ...a })));
+    setStepF4(0);
+    setHasStartedF4(false);
+    setRunningF4(false);
+  };
+  const handlePauseF4 = () => setRunningF4(false);
+
+  // Helper for salle index
+  function salleIndexF4(salle) {
+    if (salle === 'S1') return 0;
+    if (salle === 'S2') return 1;
+    if (salle === 'S3') return 2;
+    if (salle === 'S4') return 3;
+    return -1;
+  }
+
+  // Return button handler
   const handleReturn = () => setPage('menu');
 
   if (page === 'menu') {
@@ -750,6 +1005,39 @@ export default function App() {
           </button>
         </div>
         <FourmiliereSceneF3 ants={antsF3} />
+      </div>
+    );
+  }
+  if (page === 4) {
+    return (
+      <div style={{ width: '100vw', height: '100vh', background: 'linear-gradient(#a3d9a5, #e0ffe0)' }}>
+        <h2 style={{ position: 'absolute', left: 20, top: 10, color: '#234', zIndex: 10 }}>
+          Fourmilière 4 – Simulation (React + Three.js)
+        </h2>
+        <div style={{ position: 'absolute', left: 20, top: 100, zIndex: 10, display: 'flex', gap: 10 }}>
+          {!hasStartedF4 && (
+            <button onClick={handleStartF4} style={buttonStyle} title="Start">
+              <span role="img" aria-label="start">▶️</span>
+            </button>
+          )}
+          {hasStartedF4 && runningF4 && (
+            <button onClick={handlePauseF4} style={buttonStyle} title="Pause">
+              <span role="img" aria-label="pause">⏸️</span>
+            </button>
+          )}
+          {hasStartedF4 && !runningF4 && (
+            <button onClick={handleResumeF4} style={buttonStyle} title="Resume">
+              <span role="img" aria-label="resume">▶️</span>
+            </button>
+          )}
+          <button onClick={handleReplayF4} style={buttonStyle} title="Replay">
+            <span role="img" aria-label="replay">🔄</span>
+          </button>
+          <button onClick={handleReturn} style={{ ...buttonStyle, background: '#222', color: '#fff', fontSize: 18, width: 48, height: 48 }} title="Return">
+            <span role="img" aria-label="return">↩️</span>
+          </button>
+        </div>
+        <FourmiliereSceneF4 ants={antsF4} />
       </div>
     );
   }
