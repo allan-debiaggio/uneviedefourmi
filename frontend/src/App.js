@@ -240,6 +240,96 @@ function MenuPage({ onSelect }) {
   );
 }
 
+// --- Fourmiliere 2 (F2) ---
+const roomPositionsF2 = {
+  Sv: [0, 0, 0],
+  S1: [2, 1, 0],
+  S2: [2, -1, 0],
+  Sd: [4, 0, 0],
+};
+const roomsF2 = [
+  { id: 'Sv', color: 'green' },
+  { id: 'S1', color: 'blue' },
+  { id: 'S2', color: 'blue' },
+  { id: 'Sd', color: 'red' },
+];
+const edgesF2 = [
+  ['Sv', 'S1'],
+  ['Sv', 'S2'],
+  ['S1', 'Sd'],
+  ['S2', 'Sd'],
+];
+const pathsF2 = [
+  ['Sv', 'S1', 'Sd'],
+  ['Sv', 'S2', 'Sd'],
+];
+const initialAntsF2 = [
+  { id: 1, path: 0, position: 0, progress: 0, moving: false, moveStartTime: null },
+  { id: 2, path: 1, position: 0, progress: 0, moving: false, moveStartTime: null },
+];
+
+function AntF2({ ant }) {
+  const path = pathsF2[ant.path];
+  const from = roomPositionsF2[path[ant.position]];
+  const to = ant.position < path.length - 1 ? roomPositionsF2[path[ant.position + 1]] : from;
+  const progress = ant.progress || 0;
+  const pos = [
+    from[0] + (to[0] - from[0]) * progress,
+    from[1] + (to[1] - from[1]) * progress,
+    from[2] + (to[2] - from[2]) * progress,
+  ];
+  return (
+    <mesh position={pos}>
+      <sphereGeometry args={[0.25, 32, 32]} />
+      <meshStandardMaterial color="red" emissive="red" />
+    </mesh>
+  );
+}
+
+function FourmiliereSceneF2({ ants }) {
+  return (
+    <Canvas camera={{ position: [2, 2, 8], fov: 50 }} shadows>
+      <ambientLight intensity={0.7} />
+      <directionalLight position={[10, 10, 10]} intensity={0.7} castShadow />
+      {/* sol */}
+      <mesh position={[2, -1.5, 0]} receiveShadow>
+        <boxGeometry args={[7, 0.1, 5]} />
+        <meshStandardMaterial color="#225522" />
+      </mesh>
+      {/* rooms */}
+      {roomsF2.map((room) => (
+        <mesh key={room.id} position={roomPositionsF2[room.id]} castShadow>
+          <sphereGeometry args={[0.5, 32, 32]} />
+          <meshStandardMaterial color={room.color} />
+        </mesh>
+      ))}
+      {/* edges */}
+      {edgesF2.map(([from, to], i) => {
+        const p1 = roomPositionsF2[from];
+        const p2 = roomPositionsF2[to];
+        return (
+          <line key={i}>
+            <bufferGeometry>
+              <bufferAttribute
+                attach="attributes-position"
+                count={2}
+                array={new Float32Array([...p1, ...p2])}
+                itemSize={3}
+              />
+            </bufferGeometry>
+            <lineBasicMaterial color="white" linewidth={2} />
+          </line>
+        );
+      })}
+      {/* ants */}
+      {ants.map((ant) => (
+        <AntF2 key={ant.id} ant={ant} />
+      ))}
+      <OrbitControls />
+    </Canvas>
+  );
+}
+
 export default function App() {
   const [page, setPage] = useState('menu'); // 'menu' ou numéro de fourmilière
   const [ants, setAnts] = useState(initialAnts);
@@ -247,6 +337,13 @@ export default function App() {
   const [running, setRunning] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
   const intervalRef = useRef();
+
+  // F2 state
+  const [antsF2, setAntsF2] = useState(initialAntsF2.map(a => ({ ...a })));
+  const [stepF2, setStepF2] = useState(0);
+  const [runningF2, setRunningF2] = useState(false);
+  const [hasStartedF2, setHasStartedF2] = useState(false);
+  const intervalRefF2 = useRef();
 
   // Animation logic with controls
   useEffect(() => {
@@ -302,6 +399,61 @@ export default function App() {
     return () => clearInterval(intervalRef.current);
   }, [running]);
 
+  // F2 animation logic
+  useEffect(() => {
+    if (!runningF2) return;
+    intervalRefF2.current = setInterval(() => {
+      setAntsF2((prevAnts) => {
+        // occupation[0] for S1, occupation[1] for S2
+        const occupation = [null, null];
+        prevAnts.forEach((ant) => {
+          const path = pathsF2[ant.path];
+          if (ant.moving && ant.position < path.length - 1) {
+            const nextRoom = path[ant.position + 1];
+            if (nextRoom === 'S1') occupation[0] = ant.id;
+            if (nextRoom === 'S2') occupation[1] = ant.id;
+          } else {
+            if (ant.position === 1 && !ant.moving && ant.path === 0) occupation[0] = ant.id;
+            if (ant.position === 1 && !ant.moving && ant.path === 1) occupation[1] = ant.id;
+          }
+        });
+        const now = Date.now();
+        const newAnts = [...prevAnts];
+        for (let i = 0; i < newAnts.length; ++i) {
+          const ant = newAnts[i];
+          const path = pathsF2[ant.path];
+          if (ant.position < path.length - 1) {
+            const nextRoom = path[ant.position + 1];
+            const occIdx = ant.path; // 0 for S1, 1 for S2
+            if (!ant.moving) {
+              const nextFree = nextRoom === 'Sd' || occupation[occIdx] === null;
+              if (nextFree) {
+                ant.moving = true;
+                ant.moveStartTime = now;
+                if (path[ant.position] === 'S1' && occIdx === 0) occupation[0] = null;
+                if (path[ant.position] === 'S2' && occIdx === 1) occupation[1] = null;
+                if (nextRoom === 'S1') occupation[0] = ant.id;
+                if (nextRoom === 'S2') occupation[1] = ant.id;
+              }
+            } else {
+              const elapsed = (now - ant.moveStartTime) / 1000;
+              ant.progress = Math.min(elapsed / 1, 1);
+              if (ant.progress >= 1) {
+                ant.position++;
+                ant.progress = 0;
+                ant.moving = false;
+                ant.moveStartTime = null;
+              }
+            }
+          }
+        }
+        return newAnts.map((a) => ({ ...a }));
+      });
+      setStepF2((s) => s + 1);
+    }, 30);
+    return () => clearInterval(intervalRefF2.current);
+  }, [runningF2]);
+
   // Start button handler
   const handleStart = () => {
     setHasStarted(true);
@@ -318,6 +470,20 @@ export default function App() {
   };
   // Pause button handler
   const handlePause = () => setRunning(false);
+
+  // F2 controls
+  const handleStartF2 = () => {
+    setHasStartedF2(true);
+    setRunningF2(true);
+  };
+  const handleResumeF2 = () => setRunningF2(true);
+  const handleReplayF2 = () => {
+    setAntsF2(initialAntsF2.map(a => ({ ...a })));
+    setStepF2(0);
+    setHasStartedF2(false);
+    setRunningF2(false);
+  };
+  const handlePauseF2 = () => setRunningF2(false);
 
   if (page === 'menu') {
     return <MenuPage onSelect={(n) => setPage(n)} />;
@@ -351,6 +517,36 @@ export default function App() {
           </button>
         </div>
         <FourmiliereScene ants={ants} step={step} />
+      </div>
+    );
+  }
+  if (page === 2) {
+    return (
+      <div style={{ width: '100vw', height: '100vh', background: 'linear-gradient(#a3d9a5, #e0ffe0)' }}>
+        <h2 style={{ position: 'absolute', left: 20, top: 10, color: '#234', zIndex: 10 }}>
+          Fourmilière 2 – Simulation (React + Three.js)
+        </h2>
+        <div style={{ position: 'absolute', left: 20, top: 100, zIndex: 10, display: 'flex', gap: 10 }}>
+          {!hasStartedF2 && (
+            <button onClick={handleStartF2} style={buttonStyle} title="Start">
+              <span role="img" aria-label="start">▶️</span>
+            </button>
+          )}
+          {hasStartedF2 && runningF2 && (
+            <button onClick={handlePauseF2} style={buttonStyle} title="Pause">
+              <span role="img" aria-label="pause">⏸️</span>
+            </button>
+          )}
+          {hasStartedF2 && !runningF2 && (
+            <button onClick={handleResumeF2} style={buttonStyle} title="Resume">
+              <span role="img" aria-label="resume">▶️</span>
+            </button>
+          )}
+          <button onClick={handleReplayF2} style={buttonStyle} title="Replay">
+            <span role="img" aria-label="replay">🔄</span>
+          </button>
+        </div>
+        <FourmiliereSceneF2 ants={antsF2} />
       </div>
     );
   }
