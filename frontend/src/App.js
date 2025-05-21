@@ -638,6 +638,133 @@ function FourmiliereSceneF5({ ants }) {
   );
 }
 
+// --- Fourmiliere 6 (F6) ---
+const adjF6 = {
+  Sv: ['S1'],
+  S1: ['S2', 'S6'],
+  S2: ['S3', 'S5'],
+  S3: ['S4'],
+  S4: ['Sd'],
+  S5: ['S4'],
+  S6: ['S7', 'S8'],
+  S7: ['S9', 'S10'],
+  S8: ['S12', 'S11'],
+  S9: ['S14'],
+  S10: ['S14'],
+  S11: ['S13'],
+  S12: ['S13'],
+  S13: ['Sd'],
+  S14: ['Sd'],
+};
+const capacitiesF6 = {
+  S1: 8, S2: 4, S3: 2, S4: 4, S5: 2, S6: 4, S7: 2, S8: 5, S9: 1, S10: 1, S11: 1, S12: 1, S13: 4, S14: 2
+};
+const roomPositionsF6 = {
+  Sv: [0, 9, 0],
+  S1: [2, 9, 0],
+  S2: [4, 11, 0], S6: [4, 7, 0],
+  S3: [6, 12, 0], S5: [6, 10, 0], S8: [6, 6, 0], S7: [6, 4, 0],
+  S4: [8, 12, 0], S12: [8, 8, 0], S11: [8, 6, 0], S9: [8, 4, 0], S10: [8, 2, 0],
+  S13: [10, 8, 0], S14: [10, 3, 0],
+  Sd: [12, 8, 0],
+};
+const roomsF6 = Object.keys(roomPositionsF6).map(id => ({ id, color: id === 'Sv' ? 'green' : id === 'Sd' ? 'red' : 'blue' }));
+const edgesF6 = [];
+for (const from in adjF6) {
+  for (const to of adjF6[from]) {
+    edgesF6.push([from, to]);
+  }
+}
+// DFS to generate all simple paths from Sv to Sd
+function getAllPathsF6() {
+  const paths = [];
+  function dfs(node, path, visited) {
+    if (node === 'Sd') {
+      paths.push([...path, node]);
+      return;
+    }
+    visited.add(node);
+    for (const next of (adjF6[node] || [])) {
+      if (!visited.has(next)) {
+        dfs(next, [...path, node], visited);
+      }
+    }
+    visited.delete(node);
+  }
+  dfs('Sv', [], new Set());
+  return paths;
+}
+const pathsF6 = getAllPathsF6();
+const initialAntsF6 = Array.from({ length: 50 }, (_, i) => ({
+  id: i + 1,
+  chemin: i % pathsF6.length,
+  position: 0,
+  progress: 0,
+  moving: false,
+  moveStartTime: null,
+  arrivee: false,
+}));
+function AntF6({ ant }) {
+  const path = pathsF6[ant.chemin];
+  const from = roomPositionsF6[path[ant.position]];
+  const to = ant.position < path.length - 1 ? roomPositionsF6[path[ant.position + 1]] : from;
+  const progress = ant.progress || 0;
+  const pos = [
+    from[0] + (to[0] - from[0]) * progress,
+    from[1] + (to[1] - from[1]) * progress,
+    from[2] + (to[2] - from[2]) * progress,
+  ];
+  return (
+    <mesh position={pos}>
+      <sphereGeometry args={[0.18, 32, 32]} />
+      <meshStandardMaterial color="red" emissive="red" />
+    </mesh>
+  );
+}
+function FourmiliereSceneF6({ ants }) {
+  return (
+    <Canvas camera={{ position: [6, 5, 22], fov: 50 }} shadows>
+      <ambientLight intensity={0.7} />
+      <directionalLight position={[20, 20, 20]} intensity={0.7} castShadow />
+      {/* sol */}
+      <mesh position={[6, 0, 0]} receiveShadow>
+        <boxGeometry args={[16, 0.1, 14]} />
+        <meshStandardMaterial color="#225522" />
+      </mesh>
+      {/* rooms */}
+      {roomsF6.map((room) => (
+        <mesh key={room.id} position={roomPositionsF6[room.id]} castShadow>
+          <sphereGeometry args={[0.5, 32, 32]} />
+          <meshStandardMaterial color={room.color} />
+        </mesh>
+      ))}
+      {/* edges */}
+      {edgesF6.map(([from, to], i) => {
+        const p1 = roomPositionsF6[from];
+        const p2 = roomPositionsF6[to];
+        return (
+          <line key={i}>
+            <bufferGeometry>
+              <bufferAttribute
+                attach="attributes-position"
+                count={2}
+                array={new Float32Array([...p1, ...p2])}
+                itemSize={3}
+              />
+            </bufferGeometry>
+            <lineBasicMaterial color="white" linewidth={2} />
+          </line>
+        );
+      })}
+      {/* ants */}
+      {ants.map((ant) => (
+        <AntF6 key={ant.id} ant={ant} />
+      ))}
+      <OrbitControls />
+    </Canvas>
+  );
+}
+
 export default function App() {
   const [page, setPage] = useState('menu'); // 'menu' ou numéro de fourmilière
   const [ants, setAnts] = useState(initialAnts);
@@ -673,6 +800,13 @@ export default function App() {
   const [runningF5, setRunningF5] = useState(false);
   const [hasStartedF5, setHasStartedF5] = useState(false);
   const intervalRefF5 = useRef();
+
+  // F6 state
+  const [antsF6, setAntsF6] = useState(initialAntsF6.map(a => ({ ...a })));
+  const [stepF6, setStepF6] = useState(0);
+  const [runningF6, setRunningF6] = useState(false);
+  const [hasStartedF6, setHasStartedF6] = useState(false);
+  const intervalRefF6 = useRef();
 
   // Animation logic with controls
   useEffect(() => {
@@ -989,11 +1123,11 @@ export default function App() {
             ) {
               // Free up current room (except Sv)
               const curRoom = path[ant.position];
-              if (curRoom !== 'Sv' && curRoom !== 'Sd') occupation[curRoom]--;
+              if (curRoom !== 'Sv' && curRoom !== 'Sd' && capacitiesF5[curRoom]) occupation[curRoom]--;
               ant.moving = true;
               ant.moveStartTime = now;
               // Occupy next room (except Sd)
-              if (nextRoom !== 'Sd' && nextRoom !== 'Sv') {
+              if (nextRoom !== 'Sd' && nextRoom !== 'Sv' && capacitiesF5[nextRoom]) {
                 occupation[nextRoom]++;
                 beingMovedInto.add(nextRoom);
               }
@@ -1025,6 +1159,79 @@ export default function App() {
     }, 30);
     return () => clearInterval(intervalRefF5.current);
   }, [runningF5]);
+
+  // F6 animation logic
+  useEffect(() => {
+    if (!runningF6) return;
+    intervalRefF6.current = setInterval(() => {
+      setAntsF6((prevAnts) => {
+        // occupation: room id -> number of ants
+        const occupation = {};
+        Object.keys(capacitiesF6).forEach(r => occupation[r] = 0);
+        // Track which rooms are currently being moved into
+        const beingMovedInto = new Set();
+        prevAnts.forEach((ant) => {
+          if (ant.arrivee) return;
+          const path = pathsF6[ant.chemin];
+          const room = path[ant.position];
+          if (room !== 'Sv' && room !== 'Sd') occupation[room]++;
+          if (ant.moving && ant.position < path.length - 1) {
+            const nextRoom = path[ant.position + 1];
+            if (nextRoom !== 'Sd' && nextRoom !== 'Sv') beingMovedInto.add(nextRoom);
+          }
+        });
+        const now = Date.now();
+        const newAnts = [...prevAnts];
+        // Strict pipeline: process from last to first, update occupation and beingMovedInto immediately
+        for (let i = newAnts.length - 1; i >= 0; --i) {
+          const ant = newAnts[i];
+          if (ant.arrivee) continue;
+          const path = pathsF6[ant.chemin];
+          if (ant.position < path.length - 1 && !ant.moving) {
+            const nextRoom = path[ant.position + 1];
+            // Check if next room is available (capacity not exceeded at this moment) and not being moved into
+            if (
+              (nextRoom === 'Sd' || nextRoom === 'Sv') ||
+              ((capacitiesF6[nextRoom] && occupation[nextRoom] < capacitiesF6[nextRoom]) && !beingMovedInto.has(nextRoom))
+            ) {
+              // Free up current room (except Sv)
+              const curRoom = path[ant.position];
+              if (curRoom !== 'Sv' && curRoom !== 'Sd' && capacitiesF6[curRoom]) occupation[curRoom]--;
+              ant.moving = true;
+              ant.moveStartTime = now;
+              // Occupy next room (except Sd)
+              if (nextRoom !== 'Sd' && nextRoom !== 'Sv' && capacitiesF6[nextRoom]) {
+                occupation[nextRoom]++;
+                beingMovedInto.add(nextRoom);
+              }
+            }
+          }
+        }
+        // Animate movement
+        for (let i = 0; i < newAnts.length; ++i) {
+          const ant = newAnts[i];
+          if (ant.arrivee) continue;
+          const path = pathsF6[ant.chemin];
+          if (ant.moving) {
+            const elapsed = (Date.now() - ant.moveStartTime) / 1000;
+            ant.progress = Math.min(elapsed / 1, 1);
+            if (ant.progress >= 1) {
+              ant.position++;
+              ant.progress = 0;
+              ant.moving = false;
+              ant.moveStartTime = null;
+              if (path[ant.position] === 'Sd') {
+                ant.arrivee = true;
+              }
+            }
+          }
+        }
+        return newAnts.map((a) => ({ ...a }));
+      });
+      setStepF6((s) => s + 1);
+    }, 30);
+    return () => clearInterval(intervalRefF6.current);
+  }, [runningF6]);
 
   // Start button handler
   const handleStart = () => {
@@ -1098,6 +1305,20 @@ export default function App() {
     setRunningF5(false);
   };
   const handlePauseF5 = () => setRunningF5(false);
+
+  // F6 controls
+  const handleStartF6 = () => {
+    setHasStartedF6(true);
+    setRunningF6(true);
+  };
+  const handleResumeF6 = () => setRunningF6(true);
+  const handleReplayF6 = () => {
+    setAntsF6(initialAntsF6.map(a => ({ ...a })));
+    setStepF6(0);
+    setHasStartedF6(false);
+    setRunningF6(false);
+  };
+  const handlePauseF6 = () => setRunningF6(false);
 
   // Helper for salle index
   function salleIndexF4(salle) {
@@ -1278,6 +1499,39 @@ export default function App() {
           </button>
         </div>
         <FourmiliereSceneF5 ants={antsF5} />
+      </div>
+    );
+  }
+  if (page === 6) {
+    return (
+      <div style={{ width: '100vw', height: '100vh', background: 'linear-gradient(#a3d9a5, #e0ffe0)' }}>
+        <h2 style={{ position: 'absolute', left: 20, top: 10, color: '#234', zIndex: 10 }}>
+          Fourmilière 6 – Simulation (React + Three.js)
+        </h2>
+        <div style={{ position: 'absolute', left: 20, top: 100, zIndex: 10, display: 'flex', gap: 10 }}>
+          {!hasStartedF6 && (
+            <button onClick={handleStartF6} style={buttonStyle} title="Start">
+              <span role="img" aria-label="start">▶️</span>
+            </button>
+          )}
+          {hasStartedF6 && runningF6 && (
+            <button onClick={handlePauseF6} style={buttonStyle} title="Pause">
+              <span role="img" aria-label="pause">⏸️</span>
+            </button>
+          )}
+          {hasStartedF6 && !runningF6 && (
+            <button onClick={handleResumeF6} style={buttonStyle} title="Resume">
+              <span role="img" aria-label="resume">▶️</span>
+            </button>
+          )}
+          <button onClick={handleReplayF6} style={buttonStyle} title="Replay">
+            <span role="img" aria-label="replay">🔄</span>
+          </button>
+          <button onClick={handleReturn} style={{ ...buttonStyle, background: '#222', color: '#fff', fontSize: 18, width: 48, height: 48 }} title="Return">
+            <span role="img" aria-label="return">↩️</span>
+          </button>
+        </div>
+        <FourmiliereSceneF6 ants={antsF6} />
       </div>
     );
   }
