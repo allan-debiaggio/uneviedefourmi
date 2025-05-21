@@ -330,6 +330,95 @@ function FourmiliereSceneF2({ ants }) {
   );
 }
 
+// --- Fourmiliere 3 (F3) ---
+const roomPositionsF3 = {
+  Sv: [0, 0.5, 0],
+  S1: [2, 1.7, 0],
+  S2: [4, 0.5, 0],
+  Sd: [2, -0.7, 0],
+};
+const roomsF3 = [
+  { id: 'Sv', color: 'green' },
+  { id: 'S1', color: 'blue' },
+  { id: 'S2', color: 'blue' },
+  { id: 'Sd', color: 'red' },
+];
+const edgesF3 = [
+  ['Sv', 'S1'],
+  ['S1', 'S2'],
+  ['S2', 'Sd'],
+  ['Sd', 'Sv'], // cycle edge
+];
+const pathF3 = ['Sv', 'S1', 'S2', 'Sd'];
+const initialAntsF3 = Array.from({ length: 5 }, (_, i) => ({
+  id: i + 1,
+  position: 0, // index in pathF3
+  progress: 0,
+  moving: false,
+  moveStartTime: null,
+}));
+
+function AntF3({ ant }) {
+  const from = roomPositionsF3[pathF3[ant.position]];
+  const to = ant.position < pathF3.length - 1 ? roomPositionsF3[pathF3[ant.position + 1]] : from;
+  const progress = ant.progress || 0;
+  const pos = [
+    from[0] + (to[0] - from[0]) * progress,
+    from[1] + (to[1] - from[1]) * progress,
+    from[2] + (to[2] - from[2]) * progress,
+  ];
+  return (
+    <mesh position={pos}>
+      <sphereGeometry args={[0.25, 32, 32]} />
+      <meshStandardMaterial color="red" emissive="red" />
+    </mesh>
+  );
+}
+
+function FourmiliereSceneF3({ ants }) {
+  return (
+    <Canvas camera={{ position: [2, 2, 8], fov: 50 }} shadows>
+      <ambientLight intensity={0.7} />
+      <directionalLight position={[10, 10, 10]} intensity={0.7} castShadow />
+      {/* sol */}
+      <mesh position={[2, -1.5, 0]} receiveShadow>
+        <boxGeometry args={[7, 0.1, 5]} />
+        <meshStandardMaterial color="#225522" />
+      </mesh>
+      {/* rooms */}
+      {roomsF3.map((room) => (
+        <mesh key={room.id} position={roomPositionsF3[room.id]} castShadow>
+          <sphereGeometry args={[0.5, 32, 32]} />
+          <meshStandardMaterial color={room.color} />
+        </mesh>
+      ))}
+      {/* edges */}
+      {edgesF3.map(([from, to], i) => {
+        const p1 = roomPositionsF3[from];
+        const p2 = roomPositionsF3[to];
+        return (
+          <line key={i}>
+            <bufferGeometry>
+              <bufferAttribute
+                attach="attributes-position"
+                count={2}
+                array={new Float32Array([...p1, ...p2])}
+                itemSize={3}
+              />
+            </bufferGeometry>
+            <lineBasicMaterial color={i === 3 ? '#00fff7' : 'white'} linewidth={2} />
+          </line>
+        );
+      })}
+      {/* ants */}
+      {ants.map((ant) => (
+        <AntF3 key={ant.id} ant={ant} />
+      ))}
+      <OrbitControls />
+    </Canvas>
+  );
+}
+
 export default function App() {
   const [page, setPage] = useState('menu'); // 'menu' ou numéro de fourmilière
   const [ants, setAnts] = useState(initialAnts);
@@ -344,6 +433,13 @@ export default function App() {
   const [runningF2, setRunningF2] = useState(false);
   const [hasStartedF2, setHasStartedF2] = useState(false);
   const intervalRefF2 = useRef();
+
+  // F3 state
+  const [antsF3, setAntsF3] = useState(initialAntsF3.map(a => ({ ...a })));
+  const [stepF3, setStepF3] = useState(0);
+  const [runningF3, setRunningF3] = useState(false);
+  const [hasStartedF3, setHasStartedF3] = useState(false);
+  const intervalRefF3 = useRef();
 
   // Animation logic with controls
   useEffect(() => {
@@ -454,6 +550,59 @@ export default function App() {
     return () => clearInterval(intervalRefF2.current);
   }, [runningF2]);
 
+  // F3 animation logic
+  useEffect(() => {
+    if (!runningF3) return;
+    intervalRefF3.current = setInterval(() => {
+      setAntsF3((prevAnts) => {
+        // occupation: 0=Sv, 1=S1, 2=S2, 3=Sd
+        const occupation = [null, null, null, null];
+        prevAnts.forEach((ant) => {
+          if (ant.moving && ant.position < pathF3.length - 1) {
+            const nextRoomIdx = ant.position + 1;
+            if (nextRoomIdx === 1) occupation[1] = ant.id;
+            if (nextRoomIdx === 2) occupation[2] = ant.id;
+          } else {
+            if (ant.position === 1 && !ant.moving) occupation[1] = ant.id;
+            if (ant.position === 2 && !ant.moving) occupation[2] = ant.id;
+          }
+        });
+        const now = Date.now();
+        const newAnts = [...prevAnts];
+        for (let i = 0; i < newAnts.length; ++i) {
+          const ant = newAnts[i];
+          if (ant.position < pathF3.length - 1) {
+            const nextRoomIdx = ant.position + 1;
+            const nextRoom = pathF3[nextRoomIdx];
+            if (!ant.moving) {
+              const nextFree = nextRoom === 'Sd' || occupation[nextRoomIdx] === null;
+              if (nextFree) {
+                ant.moving = true;
+                ant.moveStartTime = now;
+                if (ant.position === 1) occupation[1] = null;
+                if (ant.position === 2) occupation[2] = null;
+                if (nextRoomIdx === 1) occupation[1] = ant.id;
+                if (nextRoomIdx === 2) occupation[2] = ant.id;
+              }
+            } else {
+              const elapsed = (now - ant.moveStartTime) / 1000;
+              ant.progress = Math.min(elapsed / 1, 1);
+              if (ant.progress >= 1) {
+                ant.position++;
+                ant.progress = 0;
+                ant.moving = false;
+                ant.moveStartTime = null;
+              }
+            }
+          }
+        }
+        return newAnts.map((a) => ({ ...a }));
+      });
+      setStepF3((s) => s + 1);
+    }, 30);
+    return () => clearInterval(intervalRefF3.current);
+  }, [runningF3]);
+
   // Start button handler
   const handleStart = () => {
     setHasStarted(true);
@@ -485,6 +634,21 @@ export default function App() {
   };
   const handlePauseF2 = () => setRunningF2(false);
 
+  // F3 controls
+  const handleStartF3 = () => {
+    setHasStartedF3(true);
+    setRunningF3(true);
+  };
+  const handleResumeF3 = () => setRunningF3(true);
+  const handleReplayF3 = () => {
+    setAntsF3(initialAntsF3.map(a => ({ ...a })));
+    setStepF3(0);
+    setHasStartedF3(false);
+    setRunningF3(false);
+  };
+  const handlePauseF3 = () => setRunningF3(false);
+  const handleReturn = () => setPage('menu');
+
   if (page === 'menu') {
     return <MenuPage onSelect={(n) => setPage(n)} />;
   }
@@ -514,6 +678,9 @@ export default function App() {
           )}
           <button onClick={handleReplay} style={buttonStyle} title="Replay">
             <span role="img" aria-label="replay">🔄</span>
+          </button>
+          <button onClick={handleReturn} style={{ ...buttonStyle, background: '#222', color: '#fff', fontSize: 18, width: 48, height: 48 }} title="Return">
+            <span role="img" aria-label="return">↩️</span>
           </button>
         </div>
         <FourmiliereScene ants={ants} step={step} />
@@ -545,8 +712,44 @@ export default function App() {
           <button onClick={handleReplayF2} style={buttonStyle} title="Replay">
             <span role="img" aria-label="replay">🔄</span>
           </button>
+          <button onClick={handleReturn} style={{ ...buttonStyle, background: '#222', color: '#fff', fontSize: 18, width: 48, height: 48 }} title="Return">
+            <span role="img" aria-label="return">↩️</span>
+          </button>
         </div>
         <FourmiliereSceneF2 ants={antsF2} />
+      </div>
+    );
+  }
+  if (page === 3) {
+    return (
+      <div style={{ width: '100vw', height: '100vh', background: 'linear-gradient(#a3d9a5, #e0ffe0)' }}>
+        <h2 style={{ position: 'absolute', left: 20, top: 10, color: '#234', zIndex: 10 }}>
+          Fourmilière 3 – Simulation (React + Three.js)
+        </h2>
+        <div style={{ position: 'absolute', left: 20, top: 100, zIndex: 10, display: 'flex', gap: 10 }}>
+          {!hasStartedF3 && (
+            <button onClick={handleStartF3} style={buttonStyle} title="Start">
+              <span role="img" aria-label="start">▶️</span>
+            </button>
+          )}
+          {hasStartedF3 && runningF3 && (
+            <button onClick={handlePauseF3} style={buttonStyle} title="Pause">
+              <span role="img" aria-label="pause">⏸️</span>
+            </button>
+          )}
+          {hasStartedF3 && !runningF3 && (
+            <button onClick={handleResumeF3} style={buttonStyle} title="Resume">
+              <span role="img" aria-label="resume">▶️</span>
+            </button>
+          )}
+          <button onClick={handleReplayF3} style={buttonStyle} title="Replay">
+            <span role="img" aria-label="replay">🔄</span>
+          </button>
+          <button onClick={handleReturn} style={{ ...buttonStyle, background: '#222', color: '#fff', fontSize: 18, width: 48, height: 48 }} title="Return">
+            <span role="img" aria-label="return">↩️</span>
+          </button>
+        </div>
+        <FourmiliereSceneF3 ants={antsF3} />
       </div>
     );
   }
