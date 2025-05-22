@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ant Colony Algorithms Presentation</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css?family=Orbitron:700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <div class="presentation">
+    <section class="slide" id="slide1" style="background-image: url('image_1.jpg');">
+      <div class="slide-content">
+        <div class="slide-anim anim-title">
+          <h1 class="neon-title">Algorithme 1 Chemin linéaire</h1>
+        </div>
+        <div class="slide-anim anim-problem">
+          <h2 class="neon-subtitle">Type de problématique</h2>
+          <p class="neon-desc">Une distribution des ressources étape par étape, suivant un itinéraire fixé, avec des
+            ressources limitées.</p>
+        </div>
+        <div class="slide-anim anim-graph">
+          <!-- Cyberpunk SVG illustration -->
+          <svg class="cyberpunk-graph" width="420" height="120" viewBox="0 0 420 120" fill="none"
+            xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="neonLine" x1="0" y1="60" x2="420" y2="60" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#0ff" />
+                <stop offset="1" stop-color="#f0f" />
+              </linearGradient>
+              <radialGradient id="nodeGlowSv" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#222" />
+                <stop offset="80%" stop-color="#0ff" stop-opacity="0.7" />
+                <stop offset="100%" stop-color="#0ff" stop-opacity="0.2" />
+              </radialGradient>
+              <radialGradient id="nodeGlowS1" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#222" />
+                <stop offset="80%" stop-color="#39ff14" stop-opacity="0.7" />
+                <stop offset="100%" stop-color="#39ff14" stop-opacity="0.2" />
+              </radialGradient>
+              <radialGradient id="nodeGlowS2" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#222" />
+                <stop offset="80%" stop-color="#f0f" stop-opacity="0.7" />
+                <stop offset="100%" stop-color="#f0f" stop-opacity="0.2" />
+              </radialGradient>
+              <radialGradient id="nodeGlowSd" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#222" />
+                <stop offset="80%" stop-color="#ff0080" stop-opacity="0.7" />
+                <stop offset="100%" stop-color="#ff0080" stop-opacity="0.2" />
+              </radialGradient>
+              <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="4" result="coloredBlur" />
+                <feMerge>
+                  <feMergeNode in="coloredBlur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
+            <!-- Edges (no marker) -->
+            <line x1="50" y1="60" x2="130" y2="60" stroke="url(#neonLine)" stroke-width="10" filter="url(#glow)" />
+            <line x1="150" y1="60" x2="250" y2="60" stroke="url(#neonLine)" stroke-width="10" filter="url(#glow)" />
+            <line x1="270" y1="60" x2="370" y2="60" stroke="url(#neonLine)" stroke-width="10" filter="url(#glow)" />
+            <!-- Nodes with neon radial gradient -->
+            <circle class="graph-node" cx="40" cy="60" r="22" fill="url(#nodeGlowSv)" stroke="#0ff" stroke-width="4"
+              filter="url(#glow)" />
+            <circle class="graph-node" cx="140" cy="60" r="22" fill="url(#nodeGlowS1)" stroke="#39ff14" stroke-width="4"
+              filter="url(#glow)" />
+            <circle class="graph-node" cx="260" cy="60" r="22" fill="url(#nodeGlowS2)" stroke="#f0f" stroke-width="4"
+              filter="url(#glow)" />
+            <circle class="graph-node" cx="380" cy="60" r="22" fill="url(#nodeGlowSd)" stroke="#ff0080" stroke-width="4"
+              filter="url(#glow)" />
+            <!-- Neon Arrows (outside nodes, after nodes) -->
+            <polygon points="72,60 62,54 62,66" fill="#0ff" stroke="#0ff" stroke-width="2" filter="url(#glow)" />
+            <polygon points="172,60 162,54 162,66" fill="#39ff14" stroke="#39ff14" stroke-width="2"
+              filter="url(#glow)" />
+            <polygon points="292,60 282,54 282,66" fill="#f0f" stroke="#f0f" stroke-width="2" filter="url(#glow)" />
+            <!-- Labels -->
+            <text x="40" y="66" text-anchor="middle" font-size="18" fill="#0ff" font-family="Orbitron, Arial">Sv</text>
+            <text x="140" y="66" text-anchor="middle" font-size="18" fill="#39ff14"
+              font-family="Orbitron, Arial">S1</text>
+            <text x="260" y="66" text-anchor="middle" font-size="18" fill="#f0f" font-family="Orbitron, Arial">S2</text>
+            <text x="380" y="66" text-anchor="middle" font-size="18" fill="#ff0080"
+              font-family="Orbitron, Arial">Sd</text>
+          </svg>
+        </div>
+        <div class="slide-anim anim-conditions">
+          <div class="neon-box">Conditions clés : <br><span>Une seule fourmi peut occuper les salles <b>S1</b> et
+              <b>S2</b></span></div>
+        </div>
+      </div>
+    </section>
+    <section class="slide" id="slide2" style="background-image: url('image_2.jpg');">
+      <div class="slide-content slide2-content">
+        <h1 class="neon-title">Algorithme 1 Chemin linéaire</h1>
+        <div class="ide-cards-container">
+          <div class="ide-card method-card">
+            <div class="ide-card-header">
+              <div class="ide-dot red"></div>
+              <div class="ide-dot yellow"></div>
+              <div class="ide-dot green"></div>
+              <span class="ide-card-title">methode_simuler.md</span>
+            </div>
+            <div class="ide-card-content">
+              <pre class="code-block markdown">
+<span class="md-heading"># Méthode simuler()</span>
+
+<span class="md-numbered">1.</span> <span class="md-text">On remet à zéro les compteurs d'étapes et de fourmis arrivées</span>
+<span class="md-numbered">2.</span> <span class="md-text">Tant que toutes les fourmis ne sont pas arrivées :</span>
+  <span class="md-bullet">•</span> <span class="md-text">On incrémente le compteur d'étapes</span>
+  <span class="md-bullet">•</span> <span class="md-text">On parcourt les positions des fourmis de la dernière à la première</span>
+  <span class="md-bullet">•</span> <span class="md-text">On vérifie l'occupation de la salle suivante</span>
+  <span class="md-bullet">•</span> <span class="md-text">On libère la salle actuelle si nécessaire</span>
+  <span class="md-bullet">•</span> <span class="md-text">On marque la salle suivante comme occupée ou la fourmi comme arrivée</span>
+  <span class="md-bullet">•</span> <span class="md-text">On met à jour le compteur de fourmis arrivées</span>
+              </pre>
+            </div>
+          </div>
+
+          <div class="ide-card code-card">
+            <div class="ide-card-header">
+              <div class="ide-dot red"></div>
+              <div class="ide-dot yellow"></div>
+              <div class="ide-dot green"></div>
+              <span class="ide-card-title">fourmiliere_1.cpp</span>
+            </div>
+            <div class="ide-card-content">
+              <pre class="code-block">
+<span class="keyword">class</span> <span class="class-name">Fourmi</span> {
+<span class="keyword">public</span>:
+  <span class="type">int</span> <span class="property">id</span>;
+  <span class="type">int</span> <span class="property">position</span>; <span class="comment">// index dans le chemin</span>
+  <span class="type">bool</span> <span class="property">arrivee</span>;
+  
+  <span class="class-name">Fourmi</span>(<span class="type">int</span> id_) : <span class="property">id</span>(id_), <span class="property">position</span>(0), <span class="property">arrivee</span>(<span class="boolean">false</span>) {}
+};
+
+<span class="keyword">class</span> <span class="class-name">Fourmiliere1</span> {
+<span class="keyword">public</span>:
+  <span class="type">std::vector</span><<span class="type">std::string</span>> <span class="property">chemin</span>;
+  <span class="type">std::vector</span><<span class="type">std::unique_ptr</span><<span class="class-name">Fourmi</span>>> <span class="property">fourmis</span>;
+  <span class="type">std::vector</span><<span class="type">int</span>> <span class="property">occupation</span>; <span class="comment">// 0 = libre, 1 = occupée</span>
+  <span class="type">int</span> <span class="property">nb_fourmis</span>;
+
+  <span class="class-name">Fourmiliere1</span>(<span class="type">int</span> n) : <span class="property">nb_fourmis</span>(n) {
+    <span class="property">chemin</span> = {<span class="string">"Sv"</span>, <span class="string">"S1"</span>, <span class="string">"S2"</span>, <span class="string">"Sd"</span>};
+    <span class="property">occupation</span> = <span class="type">std::vector</span><<span class="type">int</span>>(<span class="property">chemin</span>.size(), 0);
+    <span class="keyword">for</span> (<span class="type">int</span> i = 0; i < n; ++i) {
+      <span class="property">fourmis</span>.push_back(<span class="type">std::make_unique</span><<span class="class-name">Fourmi</span>>(i + 1));
+    }
+  }
+
+  <span class="type">void</span> <span class="function">simuler</span>() {
+    <span class="type">int</span> arrived = 0;
+    <span class="type">int</span> step = 0;
+    
+    <span class="keyword">while</span> (arrived < <span class="property">nb_fourmis</span>) {
+      ++step;
+      <span class="comment">// On part de la fin pour éviter les collisions</span>
+      <span class="keyword">for</span> (<span class="type">int</span> i = <span class="property">nb_fourmis</span> - 1; i >= 0; --i) {
+        <span class="class-name">Fourmi</span>* f = <span class="property">fourmis</span>[i].get();
+        <span class="keyword">if</span> (f-><span class="property">arrivee</span>) <span class="keyword">continue</span>;
+        
+        <span class="type">int</span> pos = f-><span class="property">position</span>;
+        <span class="keyword">if</span> (pos < (<span class="type">int</span>)<span class="property">chemin</span>.size() - 1) {
+          <span class="comment">// Vérifier disponibilité</span>
+          <span class="keyword">if</span> (<span class="property">chemin</span>[pos + 1] == <span class="string">"Sd"</span> || <span class="property">occupation</span>[pos + 1] == 0) {
+            <span class="comment">// Libérer et avancer</span>
+            <span class="keyword">if</span> (<span class="property">chemin</span>[pos] != <span class="string">"Sv"</span>) <span class="property">occupation</span>[pos] = 0;
+            f-><span class="property">position</span>++;
+            <span class="keyword">if</span> (<span class="property">chemin</span>[f-><span class="property">position</span>] != <span class="string">"Sd"</span>) <span class="property">occupation</span>[f-><span class="property">position</span>] = 1;
+            <span class="keyword">if</span> (<span class="property">chemin</span>[f-><span class="property">position</span>] == <span class="string">"Sd"</span>) f-><span class="property">arrivee</span> = <span class="boolean">true</span>;
+          }
+        }
+      }
+      <span class="comment">// Compter arrivées</span>
+      arrived = 0;
+      <span class="keyword">for</span> (<span class="type">int</span> i = 0; i < <span class="property">nb_fourmis</span>; ++i) {
+        <span class="keyword">if</span> (<span class="property">fourmis</span>[i]-><span class="property">arrivee</span>) arrived++;
+      }
+    }
+  }
+};</pre>
+            </div>
+          </div>
+
+          <div class="ide-card usage-card">
+            <div class="ide-card-header">
+              <div class="ide-dot red"></div>
+              <div class="ide-dot yellow"></div>
+              <div class="ide-dot green"></div>
+              <span class="ide-card-title">CasDUsage.md</span>
+            </div>
+            <div class="ide-card-content">
+              <pre class="code-block markdown">
+<span class="md-heading"># Cas d'usage</span>
+
+<span class="md-bullet">*</span> <span class="md-text">Gestion de la circulation sur des voies étroites</span>
+<span class="md-bullet">*</span> <span class="md-text">Systèmes en pipeline soumis à une capacité segmentaire limitée</span>
+<span class="md-bullet">*</span> <span class="md-text">Scénarios d'évacuation rapide</span>
+<span class="md-bullet">*</span> <span class="md-text">Chaînes de production avec postes de travail à capacité unique</span>
+<span class="md-bullet">*</span> <span class="md-text">Logistique de transit avec points de contrôle</span>
+              </pre>
+            </div>
+          </div>
+        </div>
+        <button class="nav-arrow left" id="prevBtn2">&#8592;</button>
+        <button class="nav-arrow right" id="nextBtn2">&#8594;</button>
+      </div>
+    </section>
+    <button class="nav-arrow left" id="prevBtn">&#8592;</button>
+    <button class="nav-arrow right" id="nextBtn">&#8594;</button>
+  </div>
+  <script src="script.js"></script>
+</body>
+
+</html>
