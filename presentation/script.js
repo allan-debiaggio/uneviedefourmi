@@ -12,6 +12,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const nextBtn7 = document.getElementById('nextBtn7');
   const prevBtn8 = document.getElementById('prevBtn8');
   const nextBtn8 = document.getElementById('nextBtn8');
+  const prevBtn9 = document.getElementById('prevBtn9');
+  const nextBtn9 = document.getElementById('nextBtn9');
+  const prevBtn10 = document.getElementById('prevBtn10');
+  const nextBtn10 = document.getElementById('nextBtn10');
   let current = 0;
 
   function showSlide(idx) {
@@ -63,6 +67,18 @@ document.addEventListener('DOMContentLoaded', () => {
   if (prevBtn8 && nextBtn8) {
     prevBtn8.addEventListener('click', prevSlide);
     nextBtn8.addEventListener('click', nextSlide);
+  }
+
+  // Add new handlers for slide 9
+  if (prevBtn9 && nextBtn9) {
+    prevBtn9.addEventListener('click', prevSlide);
+    nextBtn9.addEventListener('click', nextSlide);
+  }
+
+  // Add new handlers for slide 10
+  if (prevBtn10 && nextBtn10) {
+    prevBtn10.addEventListener('click', prevSlide);
+    nextBtn10.addEventListener('click', nextSlide);
   }
 
   // Keyboard navigation

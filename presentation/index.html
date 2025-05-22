@@ -546,8 +546,6 @@
               vers Sv<br>• Mécanisme de terminaison empêchant les fourmis de repartir après avoir atteint Sd<br>• Permet
               d'éviter les boucles infinies dans le parcours</span></div>
         </div>
-        <button class="nav-arrow left" id="prevBtn5">&#8592;</button>
-        <button class="nav-arrow right" id="nextBtn5">&#8594;</button>
       </div>
     </section>
     <section class="slide" id="slide6" style="background-image: url('image_6.jpg');">
@@ -624,8 +622,7 @@
       <span class="comment">// Compter les fourmis arrivées</span>
       arrived = 0;
       <span class="keyword">for</span> (<span class="type">int</span> i = 0; i < <span class="property">nb_fourmis</span>; ++i) {
-        <span class="keyword">if</span> (<span class="property">fourmis</span>[i]-><span class="property">arrivee</span>)
-          arrived++;
+        <span class="keyword">if</span> (<span class="property">fourmis</span>[i]-><span class="property">arrivee</span>) arrived++;
       }
     }
   }
@@ -1037,6 +1034,943 @@
         </div>
         <button class="nav-arrow left" id="prevBtn8">&#8592;</button>
         <button class="nav-arrow right" id="nextBtn8">&#8594;</button>
+      </div>
+    </section>
+    <section class="slide" id="slide9" style="background-image: url('image_9.jpg');">
+      <div class="slide-content">
+        <div class="slide-anim anim-title">
+          <h1 class="neon-title">Algorithme 5 Navigation multi-chemins avec capacités variables</h1>
+        </div>
+        <div class="slide-anim anim-problem">
+          <h2 class="neon-subtitle">Type de problématique</h2>
+          <p class="neon-desc">Algorithme mettant en œuvre une navigation entre plusieurs chemins et des capacités
+            variables.</p>
+        </div>
+        <div class="slide-anim anim-graph">
+          <!-- Cyberpunk SVG illustration for multi-path navigation with variable capacities -->
+          <svg class="cyberpunk-graph" width="500" height="270" viewBox="0 0 500 270" fill="none"
+            xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="neonLine5a" x1="0" y1="0" x2="100%" y2="0" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#0ff" />
+                <stop offset="1" stop-color="#39ff14" />
+              </linearGradient>
+              <linearGradient id="neonLine5b" x1="0" y1="0" x2="100%" y2="0" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#39ff14" />
+                <stop offset="1" stop-color="#f0f" />
+              </linearGradient>
+              <linearGradient id="neonLine5c" x1="0" y1="0" x2="100%" y2="0" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#39ff14" />
+                <stop offset="1" stop-color="#8a2be2" />
+              </linearGradient>
+              <linearGradient id="neonLine5d" x1="0" y1="0" x2="100%" y2="0" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#8a2be2" />
+                <stop offset="1" stop-color="#ff5500" />
+              </linearGradient>
+              <linearGradient id="neonLine5e" x1="0" y1="0" x2="100%" y2="0" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#f0f" />
+                <stop offset="1" stop-color="#ff5500" />
+              </linearGradient>
+              <linearGradient id="neonLine5f" x1="0" y1="0" x2="100%" y2="0" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#ff5500" />
+                <stop offset="1" stop-color="#ff3399" />
+              </linearGradient>
+              <linearGradient id="neonLine5g" x1="0" y1="0" x2="100%" y2="0" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#ff5500" />
+                <stop offset="1" stop-color="#ffcc00" />
+              </linearGradient>
+              <linearGradient id="neonLine5h" x1="0" y1="0" x2="100%" y2="0" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#ff3399" />
+                <stop offset="1" stop-color="#ff0080" />
+              </linearGradient>
+              <linearGradient id="neonLine5i" x1="0" y1="0" x2="100%" y2="0" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#ffcc00" />
+                <stop offset="1" stop-color="#ff0080" />
+              </linearGradient>
+
+              <radialGradient id="nodeGlowSv5" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#222" />
+                <stop offset="80%" stop-color="#0ff" stop-opacity="0.7" />
+                <stop offset="100%" stop-color="#0ff" stop-opacity="0.2" />
+              </radialGradient>
+              <radialGradient id="nodeGlowS1_5" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#222" />
+                <stop offset="80%" stop-color="#39ff14" stop-opacity="0.7" />
+                <stop offset="100%" stop-color="#39ff14" stop-opacity="0.2" />
+              </radialGradient>
+              <radialGradient id="nodeGlowS2_5" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#222" />
+                <stop offset="80%" stop-color="#f0f" stop-opacity="0.7" />
+                <stop offset="100%" stop-color="#f0f" stop-opacity="0.2" />
+              </radialGradient>
+              <radialGradient id="nodeGlowS3_5" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#222" />
+                <stop offset="80%" stop-color="#8a2be2" stop-opacity="0.7" />
+                <stop offset="100%" stop-color="#8a2be2" stop-opacity="0.2" />
+              </radialGradient>
+              <radialGradient id="nodeGlowS4_5" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#222" />
+                <stop offset="80%" stop-color="#ff5500" stop-opacity="0.7" />
+                <stop offset="100%" stop-color="#ff5500" stop-opacity="0.2" />
+              </radialGradient>
+              <radialGradient id="nodeGlowS5_5" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#222" />
+                <stop offset="80%" stop-color="#ff3399" stop-opacity="0.7" />
+                <stop offset="100%" stop-color="#ff3399" stop-opacity="0.2" />
+              </radialGradient>
+              <radialGradient id="nodeGlowS6_5" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#222" />
+                <stop offset="80%" stop-color="#ffcc00" stop-opacity="0.7" />
+                <stop offset="100%" stop-color="#ffcc00" stop-opacity="0.2" />
+              </radialGradient>
+              <radialGradient id="nodeGlowSd5" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#222" />
+                <stop offset="80%" stop-color="#ff0080" stop-opacity="0.7" />
+                <stop offset="100%" stop-color="#ff0080" stop-opacity="0.2" />
+              </radialGradient>
+
+              <filter id="glow5" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="4" result="coloredBlur" />
+                <feMerge>
+                  <feMergeNode in="coloredBlur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
+
+            <!-- Path 1: Sv -> S1 -> S2 -> S4 -> S5 -> Sd -->
+            <line x1="70" y1="140" x2="150" y2="140" stroke="url(#neonLine5a)" stroke-width="10" filter="url(#glow5)" />
+            <line x1="170" y1="100" x2="220" y2="100" stroke="url(#neonLine5b)" stroke-width="10"
+              filter="url(#glow5)" />
+            <line x1="260" y1="100" x2="320" y2="140" stroke="url(#neonLine5e)" stroke-width="10"
+              filter="url(#glow5)" />
+            <line x1="340" y1="100" x2="440" y2="140" stroke="url(#neonLine5h)" stroke-width="10"
+              filter="url(#glow5)" />
+
+            <!-- Path 2: Sv -> S1 -> S3 -> S4 -> S6 -> Sd -->
+            <line x1="170" y1="180" x2="220" y2="180" stroke="url(#neonLine5c)" stroke-width="10"
+              filter="url(#glow5)" />
+            <line x1="260" y1="180" x2="320" y2="140" stroke="url(#neonLine5d)" stroke-width="10"
+              filter="url(#glow5)" />
+            <line x1="340" y1="180" x2="440" y2="140" stroke="url(#neonLine5i)" stroke-width="10"
+              filter="url(#glow5)" />
+
+            <!-- Connecting segments -->
+            <line x1="160" y1="140" x2="160" y2="100" stroke="url(#neonLine5b)" stroke-width="8" filter="url(#glow5)" />
+            <line x1="160" y1="140" x2="160" y2="180" stroke="url(#neonLine5c)" stroke-width="8" filter="url(#glow5)" />
+            <line x1="330" y1="140" x2="330" y2="100" stroke="url(#neonLine5f)" stroke-width="8" filter="url(#glow5)" />
+            <line x1="330" y1="140" x2="330" y2="180" stroke="url(#neonLine5g)" stroke-width="8" filter="url(#glow5)" />
+
+            <!-- Nodes with neon radial gradient -->
+            <circle class="graph-node" cx="50" cy="140" r="22" fill="url(#nodeGlowSv5)" stroke="#0ff" stroke-width="4"
+              filter="url(#glow5)" />
+            <circle class="graph-node" cx="160" cy="140" r="24" fill="url(#nodeGlowS1_5)" stroke="#39ff14"
+              stroke-width="4" filter="url(#glow5)" />
+            <circle class="graph-node" cx="240" cy="100" r="22" fill="url(#nodeGlowS2_5)" stroke="#f0f" stroke-width="4"
+              filter="url(#glow5)" />
+            <circle class="graph-node" cx="240" cy="180" r="22" fill="url(#nodeGlowS3_5)" stroke="#8a2be2"
+              stroke-width="4" filter="url(#glow5)" />
+            <circle class="graph-node" cx="330" cy="140" r="24" fill="url(#nodeGlowS4_5)" stroke="#ff5500"
+              stroke-width="4" filter="url(#glow5)" />
+            <circle class="graph-node" cx="330" cy="100" r="22" fill="url(#nodeGlowS5_5)" stroke="#ff3399"
+              stroke-width="4" filter="url(#glow5)" />
+            <circle class="graph-node" cx="330" cy="180" r="22" fill="url(#nodeGlowS6_5)" stroke="#ffcc00"
+              stroke-width="4" filter="url(#glow5)" />
+            <circle class="graph-node" cx="460" cy="140" r="22" fill="url(#nodeGlowSd5)" stroke="#ff0080"
+              stroke-width="4" filter="url(#glow5)" />
+
+            <!-- Neon Arrows -->
+            <polygon points="140,140 130,134 130,146" fill="#39ff14" stroke="#39ff14" stroke-width="2"
+              filter="url(#glow5)" />
+            <polygon points="160,115 154,125 166,125" fill="#f0f" stroke="#f0f" stroke-width="2" filter="url(#glow5)" />
+            <polygon points="160,165 154,155 166,155" fill="#8a2be2" stroke="#8a2be2" stroke-width="2"
+              filter="url(#glow5)" />
+            <polygon points="210,100 200,94 200,106" fill="#f0f" stroke="#f0f" stroke-width="2" filter="url(#glow5)" />
+            <polygon points="210,180 200,174 200,186" fill="#8a2be2" stroke="#8a2be2" stroke-width="2"
+              filter="url(#glow5)" />
+            <polygon points="295,130 285,124 285,136" fill="#ff5500" stroke="#ff5500" stroke-width="2"
+              filter="url(#glow5)" />
+            <polygon points="295,150 285,144 285,156" fill="#ff5500" stroke="#ff5500" stroke-width="2"
+              filter="url(#glow5)" />
+            <polygon points="330,115 324,125 336,125" fill="#ff3399" stroke="#ff3399" stroke-width="2"
+              filter="url(#glow5)" />
+            <polygon points="330,165 324,155 336,155" fill="#ffcc00" stroke="#ffcc00" stroke-width="2"
+              filter="url(#glow5)" />
+            <polygon points="430,140 420,134 420,146" fill="#ff0080" stroke="#ff0080" stroke-width="2"
+              filter="url(#glow5)" />
+
+            <!-- Capacity indicators -->
+            <circle cx="160" cy="140" r="30" fill="none" stroke="#39ff14" stroke-width="2" stroke-dasharray="4,2"
+              filter="url(#glow5)" />
+            <text x="200" y="140" text-anchor="middle" font-size="12" fill="#ffffff" font-family="Orbitron, Arial"
+              filter="url(#glow5)">C=2</text>
+
+            <circle cx="240" cy="100" r="28" fill="none" stroke="#f0f" stroke-width="2" stroke-dasharray="4,2"
+              filter="url(#glow5)" />
+            <text x="280" y="100" text-anchor="middle" font-size="12" fill="#ffffff" font-family="Orbitron, Arial"
+              filter="url(#glow5)">C=1</text>
+
+            <circle cx="240" cy="180" r="28" fill="none" stroke="#8a2be2" stroke-width="2" stroke-dasharray="4,2"
+              filter="url(#glow5)" />
+            <text x="280" y="180" text-anchor="middle" font-size="12" fill="#ffffff" font-family="Orbitron, Arial"
+              filter="url(#glow5)">C=1</text>
+
+            <circle cx="330" cy="140" r="30" fill="none" stroke="#ff5500" stroke-width="2" stroke-dasharray="4,2"
+              filter="url(#glow5)" />
+            <text x="370" y="140" text-anchor="middle" font-size="12" fill="#ffffff" font-family="Orbitron, Arial"
+              filter="url(#glow5)">C=2</text>
+
+            <circle cx="330" cy="100" r="28" fill="none" stroke="#ff3399" stroke-width="2" stroke-dasharray="4,2"
+              filter="url(#glow5)" />
+            <text x="370" y="100" text-anchor="middle" font-size="12" fill="#ffffff" font-family="Orbitron, Arial"
+              filter="url(#glow5)">C=1</text>
+
+            <circle cx="330" cy="180" r="28" fill="none" stroke="#ffcc00" stroke-width="2" stroke-dasharray="4,2"
+              filter="url(#glow5)" />
+            <text x="370" y="180" text-anchor="middle" font-size="12" fill="#ffffff" font-family="Orbitron, Arial"
+              filter="url(#glow5)">C=1</text>
+
+            <!-- Labels -->
+            <text x="50" y="145" text-anchor="middle" font-size="18" fill="#0ff" font-family="Orbitron, Arial">Sv</text>
+            <text x="160" y="145" text-anchor="middle" font-size="18" fill="#39ff14"
+              font-family="Orbitron, Arial">S1</text>
+            <text x="240" y="105" text-anchor="middle" font-size="18" fill="#f0f"
+              font-family="Orbitron, Arial">S2</text>
+            <text x="240" y="185" text-anchor="middle" font-size="18" fill="#8a2be2"
+              font-family="Orbitron, Arial">S3</text>
+            <text x="330" y="145" text-anchor="middle" font-size="18" fill="#ff5500"
+              font-family="Orbitron, Arial">S4</text>
+            <text x="330" y="105" text-anchor="middle" font-size="18" fill="#ff3399"
+              font-family="Orbitron, Arial">S5</text>
+            <text x="330" y="185" text-anchor="middle" font-size="18" fill="#ffcc00"
+              font-family="Orbitron, Arial">S6</text>
+            <text x="460" y="145" text-anchor="middle" font-size="18" fill="#ff0080"
+              font-family="Orbitron, Arial">Sd</text>
+
+            <!-- Path indicators -->
+            <rect x="100" y="50" width="280" height="20" rx="10" fill="rgba(20,20,40,0.7)" stroke="#39ff14"
+              stroke-width="1" />
+            <text x="240" y="65" text-anchor="middle" font-size="14" fill="#39ff14" font-family="Orbitron, Arial">Chemin
+              1: Sv→S1→S2→S4→S5→Sd</text>
+
+            <rect x="100" y="230" width="280" height="20" rx="10" fill="rgba(20,20,40,0.7)" stroke="#8a2be2"
+              stroke-width="1" />
+            <text x="240" y="245" text-anchor="middle" font-size="14" fill="#8a2be2"
+              font-family="Orbitron, Arial">Chemin 2: Sv→S1→S3→S4→S6→Sd</text>
+          </svg>
+        </div>
+        <div class="slide-anim anim-conditions">
+          <div class="neon-box">Caractéristiques clés : <br><span>• Capacités variables selon les salles (C=1 ou
+              C=2)<br>• Points de jonction entre plusieurs chemins (S1 et S4)<br>• Optimisation des flux entre
+              différentes branches parallèles<br>• Évitement des collisions par priorité descendante</span></div>
+        </div>
+        <button class="nav-arrow left" id="prevBtn9">&#8592;</button>
+        <button class="nav-arrow right" id="nextBtn9">&#8594;</button>
+      </div>
+    </section>
+    <section class="slide" id="slide10" style="background-image: url('image_10.jpg');">
+      <div class="slide-content slide2-content">
+        <h1 class="neon-title">Implémentation Algorithme 5</h1>
+        <div class="ide-cards-container">
+          <div class="ide-card code-card">
+            <div class="ide-card-header">
+              <div class="ide-dot red"></div>
+              <div class="ide-dot yellow"></div>
+              <div class="ide-dot green"></div>
+              <span class="ide-card-title">fourmiliere_5.cpp</span>
+            </div>
+            <div class="ide-card-content">
+              <pre class="code-block">
+<span class="keyword">class</span> <span class="class-name">Fourmi</span> {
+<span class="keyword">public</span>:
+  <span class="type">int</span> <span class="property">id</span>;
+  <span class="type">int</span> <span class="property">position</span>; <span class="comment">// index dans le chemin choisi</span>
+  <span class="type">int</span> <span class="property">chemin</span>;   <span class="comment">// 0: Sv->S1->S2->S4->S5->Sd, 1: Sv->S1->S3->S4->S6->Sd</span>
+  <span class="type">bool</span> <span class="property">arrivee</span>;
+  <span class="class-name">Fourmi</span>(<span class="type">int</span> id_, <span class="type">int</span> chemin_) : <span class="property">id</span>(id_), <span class="property">position</span>(0), <span class="property">chemin</span>(chemin_), <span class="property">arrivee</span>(<span class="boolean">false</span>) {}
+};
+
+<span class="keyword">class</span> <span class="class-name">Fourmiliere5</span> {
+<span class="keyword">public</span>:
+  <span class="type">std::vector</span><<span class="type">std::vector</span><<span class="type">std::string</span>>> <span class="property">chemins</span> = {
+      {<span class="string">"Sv"</span>, <span class="string">"S1"</span>, <span class="string">"S2"</span>, <span class="string">"S4"</span>, <span class="string">"S5"</span>, <span class="string">"Sd"</span>},
+      {<span class="string">"Sv"</span>, <span class="string">"S1"</span>, <span class="string">"S3"</span>, <span class="string">"S4"</span>, <span class="string">"S6"</span>, <span class="string">"Sd"</span>}};
+  <span class="type">std::vector</span><<span class="type">std::unique_ptr</span><<span class="class-name">Fourmi</span>>> <span class="property">fourmis</span>;
+  <span class="type">std::unordered_map</span><<span class="type">std::string</span>, <span class="type">int</span>> <span class="property">capacites</span>;  <span class="comment">// capacité max de chaque salle</span>
+  <span class="type">std::unordered_map</span><<span class="type">std::string</span>, <span class="type">int</span>> <span class="property">occupation</span>; <span class="comment">// occupation courante</span>
+  <span class="type">int</span> <span class="property">nb_fourmis</span>;
+
+  <span class="class-name">Fourmiliere5</span>(<span class="type">int</span> n) : <span class="property">nb_fourmis</span>(n) {
+    <span class="comment">// Capacités des salles</span>
+    <span class="property">capacites</span>[<span class="string">"S1"</span>] = 2;
+    <span class="property">capacites</span>[<span class="string">"S4"</span>] = 2;
+    <span class="property">capacites</span>[<span class="string">"S2"</span>] = 1;
+    <span class="property">capacites</span>[<span class="string">"S3"</span>] = 1;
+    <span class="property">capacites</span>[<span class="string">"S5"</span>] = 1;
+    <span class="property">capacites</span>[<span class="string">"S6"</span>] = 1;
+    <span class="comment">// Les autres (Sv, Sd) sont illimitées</span>
+    
+    <span class="comment">// Répartition équilibrée des fourmis sur les deux chemins</span>
+    <span class="keyword">for</span> (<span class="type">int</span> i = 0; i < n; ++i) {
+      <span class="type">int</span> ch = (i % 2 == 0) ? 0 : 1;
+      <span class="property">fourmis</span>.push_back(<span class="type">std::make_unique</span><<span class="class-name">Fourmi</span>>(i + 1, ch));
+    }
+    
+    <span class="comment">// Initialiser occupation</span>
+    <span class="keyword">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> &salle : {<span class="string">"S1"</span>, <span class="string">"S2"</span>, <span class="string">"S3"</span>, <span class="string">"S4"</span>, <span class="string">"S5"</span>, <span class="string">"S6"</span>}) {
+      <span class="property">occupation</span>[salle] = 0;
+    }
+  }
+
+  <span class="type">void</span> <span class="function">simuler</span>() {
+    <span class="type">int</span> arrived = 0;
+    <span class="type">int</span> step = 0;
+    
+    <span class="keyword">while</span> (arrived < <span class="property">nb_fourmis</span>) {
+      ++step;
+      <span class="comment">// On part de la fin pour éviter les blocages</span>
+      <span class="keyword">for</span> (<span class="type">int</span> i = <span class="property">nb_fourmis</span> - 1; i >= 0; --i) {
+        <span class="class-name">Fourmi</span> *f = <span class="property">fourmis</span>[i].get();
+        <span class="keyword">if</span> (f-><span class="property">arrivee</span>) <span class="keyword">continue</span>;
+        
+        <span class="type">int</span> pos = f-><span class="property">position</span>;
+        <span class="type">int</span> ch = f-><span class="property">chemin</span>;
+        <span class="keyword">const</span> <span class="type">std::vector</span><<span class="type">std::string</span>> &chemin = <span class="property">chemins</span>[ch];
+        
+        <span class="keyword">if</span> (pos < (<span class="type">int</span>)chemin.size() - 1) {
+          <span class="type">std::string</span> next = chemin[pos + 1];
+          <span class="comment">// Vérifier capacité de la salle suivante (sauf Sd)</span>
+          <span class="keyword">if</span> (next == <span class="string">"Sd"</span> || <span class="property">occupation</span>[next] < <span class="property">capacites</span>[next]) {
+            <span class="comment">// Libérer la salle actuelle (sauf Sv)</span>
+            <span class="keyword">if</span> (chemin[pos] != <span class="string">"Sv"</span>)
+              <span class="property">occupation</span>[chemin[pos]]--;
+              
+            <span class="comment">// Avancer</span>
+            f-><span class="property">position</span>++;
+            
+            <span class="comment">// Occuper la nouvelle salle (sauf Sd)</span>
+            <span class="keyword">if</span> (chemin[f-><span class="property">position</span>] != <span class="string">"Sd"</span>)
+              <span class="property">occupation</span>[chemin[f-><span class="property">position</span>]]++;
+              
+            <span class="comment">// Marquer arrivée</span>
+            <span class="keyword">if</span> (chemin[f-><span class="property">position</span>] == <span class="string">"Sd"</span>)
+              f-><span class="property">arrivee</span> = <span class="boolean">true</span>;
+          }
+        }
+      }
+      
+      <span class="comment">// Compter les fourmis arrivées</span>
+      arrived = 0;
+      <span class="keyword">for</span> (<span class="type">int</span> i = 0; i < <span class="property">nb_fourmis</span>; ++i) {
+        <span class="keyword">if</span> (<span class="property">fourmis</span>[i]-><span class="property">arrivee</span>) arrived++;
+      }
+    }
+  }
+};</pre>
+            </div>
+          </div>
+
+          <div class="ide-card usage-card">
+            <div class="ide-card-header">
+              <div class="ide-dot red"></div>
+              <div class="ide-dot yellow"></div>
+              <div class="ide-dot green"></div>
+              <span class="ide-card-title">gestion_capacites.md</span>
+            </div>
+            <div class="ide-card-content">
+              <pre class="code-block markdown">
+<span class="md-heading"># Gestion des capacités variables</span>
+
+<span class="md-bullet">*</span> <span class="md-text">Utilisation d'une table de hachage (unordered_map) pour associer chaque salle à sa capacité maximale</span>
+
+<span class="md-bullet">*</span> <span class="md-text">Suivi en temps réel du taux d'occupation de chaque salle</span>
+
+<span class="md-bullet">*</span> <span class="md-text">Vérification de disponibilité avant déplacement: <span style="color:#ff5500">if (next == "Sd" || occupation[next] < capacites[next])</span></span>
+
+<span class="md-bullet">*</span> <span class="md-text">Mise à jour des compteurs d'occupation lors des entrées/sorties des fourmis</span>
+              </pre>
+            </div>
+          </div>
+
+          <div class="ide-card method-card">
+            <div class="ide-card-header">
+              <div class="ide-dot red"></div>
+              <div class="ide-dot yellow"></div>
+              <div class="ide-dot green"></div>
+              <span class="ide-card-title">cas_usage.md</span>
+            </div>
+            <div class="ide-card-content">
+              <pre class="code-block markdown">
+<span class="md-heading"># Cas d'usage</span>
+
+<span class="md-bullet">*</span> <span class="md-text">Planification de capacité dans les réseaux de transport</span>
+
+<span class="md-bullet">*</span> <span class="md-text">Gestion de trafic avec points de jonction à capacité limitée</span>
+
+<span class="md-bullet">*</span> <span class="md-text">Systèmes de files d'attente avec priorités et capacités variables</span>
+
+<span class="md-bullet">*</span> <span class="md-text">Optimisation de flux dans des espaces contraints (ascenseurs, parkings)</span>
+
+<span class="md-bullet">*</span> <span class="md-text">Modélisation de comportements de foule avec différents points de congestion</span>
+              </pre>
+            </div>
+          </div>
+        </div>
+        <button class="nav-arrow left" id="prevBtn10">&#8592;</button>
+        <button class="nav-arrow right" id="nextBtn10">&#8594;</button>
+      </div>
+    </section>
+    <section class="slide" id="slide11" style="background-image: url('image_11.jpg');">
+      <div class="slide-content">
+        <div class="slide-anim anim-title">
+          <h1 class="neon-title" style="font-size: 2.4rem; line-height: 1.2;">Algorithme 6 Simulation avancée avec
+            découverte dynamique de chemins et prévention des cycles</h1>
+        </div>
+        <div class="slide-anim anim-problem">
+          <h2 class="neon-subtitle">Type de problématique</h2>
+          <p class="neon-desc">Algorithme mettant en œuvre une structure de graphe complexe avec des chemins découverts
+            dynamiquement, des capacités de salles variables et un mécanisme de prévention des cycles.</p>
+        </div>
+        <div class="slide-anim anim-graph">
+          <!-- Cyberpunk SVG illustration for dynamic path discovery and cycle prevention -->
+          <svg class="cyberpunk-graph" width="600" height="320" viewBox="0 0 600 320" fill="none"
+            xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <!-- Base colors for nodes -->
+              <linearGradient id="neonLine6a" x1="0" y1="0" x2="100%" y2="0" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#0ff" />
+                <stop offset="1" stop-color="#39ff14" />
+              </linearGradient>
+              <linearGradient id="neonLine6b" x1="0" y1="0" x2="100%" y2="0" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#39ff14" />
+                <stop offset="1" stop-color="#f0f" />
+              </linearGradient>
+              <linearGradient id="neonLine6c" x1="0" y1="0" x2="100%" y2="0" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#f0f" />
+                <stop offset="1" stop-color="#ff5500" />
+              </linearGradient>
+              <linearGradient id="neonLine6d" x1="0" y1="0" x2="100%" y2="0" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#ff5500" />
+                <stop offset="1" stop-color="#ff0080" />
+              </linearGradient>
+              <linearGradient id="neonLine6e" x1="0" y1="0" x2="100%" y2="0" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#39ff14" />
+                <stop offset="1" stop-color="#ffcc00" />
+              </linearGradient>
+              <linearGradient id="neonLine6f" x1="0" y1="0" x2="100%" y2="0" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#ffcc00" />
+                <stop offset="1" stop-color="#f0f" />
+              </linearGradient>
+              <linearGradient id="neonLine6g" x1="0" y1="0" x2="100%" y2="0" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#ffcc00" />
+                <stop offset="1" stop-color="#ff0080" />
+              </linearGradient>
+              <linearGradient id="neonLine6h" x1="0" y1="0" x2="100%" y2="0" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#8a2be2" />
+                <stop offset="1" stop-color="#ff0080" />
+              </linearGradient>
+
+              <!-- Node gradients -->
+              <radialGradient id="nodeGlowSv6" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#222" />
+                <stop offset="80%" stop-color="#0ff" stop-opacity="0.7" />
+                <stop offset="100%" stop-color="#0ff" stop-opacity="0.2" />
+              </radialGradient>
+              <radialGradient id="nodeGlowS1_6" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#222" />
+                <stop offset="80%" stop-color="#39ff14" stop-opacity="0.7" />
+                <stop offset="100%" stop-color="#39ff14" stop-opacity="0.2" />
+              </radialGradient>
+              <radialGradient id="nodeGlowS2_6" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#222" />
+                <stop offset="80%" stop-color="#f0f" stop-opacity="0.7" />
+                <stop offset="100%" stop-color="#f0f" stop-opacity="0.2" />
+              </radialGradient>
+              <radialGradient id="nodeGlowS3_6" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#222" />
+                <stop offset="80%" stop-color="#ff5500" stop-opacity="0.7" />
+                <stop offset="100%" stop-color="#ff5500" stop-opacity="0.2" />
+              </radialGradient>
+              <radialGradient id="nodeGlowS4_6" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#222" />
+                <stop offset="80%" stop-color="#ff3399" stop-opacity="0.7" />
+                <stop offset="100%" stop-color="#ff3399" stop-opacity="0.2" />
+              </radialGradient>
+              <radialGradient id="nodeGlowS5_6" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#222" />
+                <stop offset="80%" stop-color="#ffcc00" stop-opacity="0.7" />
+                <stop offset="100%" stop-color="#ffcc00" stop-opacity="0.2" />
+              </radialGradient>
+              <radialGradient id="nodeGlowS6_6" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#222" />
+                <stop offset="80%" stop-color="#8a2be2" stop-opacity="0.7" />
+                <stop offset="100%" stop-color="#8a2be2" stop-opacity="0.2" />
+              </radialGradient>
+              <radialGradient id="nodeGlowS7_6" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#222" />
+                <stop offset="80%" stop-color="#00ccff" stop-opacity="0.7" />
+                <stop offset="100%" stop-color="#00ccff" stop-opacity="0.2" />
+              </radialGradient>
+              <radialGradient id="nodeGlowS8_6" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#222" />
+                <stop offset="80%" stop-color="#ff9900" stop-opacity="0.7" />
+                <stop offset="100%" stop-color="#ff9900" stop-opacity="0.2" />
+              </radialGradient>
+              <radialGradient id="nodeGlowS9_6" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#222" />
+                <stop offset="80%" stop-color="#33cc33" stop-opacity="0.7" />
+                <stop offset="100%" stop-color="#33cc33" stop-opacity="0.2" />
+              </radialGradient>
+              <radialGradient id="nodeGlowS10_6" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#222" />
+                <stop offset="80%" stop-color="#cc99ff" stop-opacity="0.7" />
+                <stop offset="100%" stop-color="#cc99ff" stop-opacity="0.2" />
+              </radialGradient>
+              <radialGradient id="nodeGlowS11_6" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#222" />
+                <stop offset="80%" stop-color="#66ffff" stop-opacity="0.7" />
+                <stop offset="100%" stop-color="#66ffff" stop-opacity="0.2" />
+              </radialGradient>
+              <radialGradient id="nodeGlowS12_6" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#222" />
+                <stop offset="80%" stop-color="#ff66b2" stop-opacity="0.7" />
+                <stop offset="100%" stop-color="#ff66b2" stop-opacity="0.2" />
+              </radialGradient>
+              <radialGradient id="nodeGlowS13_6" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#222" />
+                <stop offset="80%" stop-color="#ffcc66" stop-opacity="0.7" />
+                <stop offset="100%" stop-color="#ffcc66" stop-opacity="0.2" />
+              </radialGradient>
+              <radialGradient id="nodeGlowS14_6" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#222" />
+                <stop offset="80%" stop-color="#9966ff" stop-opacity="0.7" />
+                <stop offset="100%" stop-color="#9966ff" stop-opacity="0.2" />
+              </radialGradient>
+              <radialGradient id="nodeGlowSd6" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#222" />
+                <stop offset="80%" stop-color="#ff0080" stop-opacity="0.7" />
+                <stop offset="100%" stop-color="#ff0080" stop-opacity="0.2" />
+              </radialGradient>
+
+              <filter id="glow6" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="4" result="coloredBlur" />
+                <feMerge>
+                  <feMergeNode in="coloredBlur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+
+              <!-- Cycle indicator pattern -->
+              <pattern id="cyclePattern" patternUnits="userSpaceOnUse" width="10" height="10"
+                patternTransform="rotate(45)">
+                <line x1="0" y1="5" x2="10" y2="5" stroke="#ff3333" stroke-width="2" />
+              </pattern>
+            </defs>
+
+            <!-- Upper Path: Sv -> S1 -> S2 -> S3 -> S4 -> Sd -->
+            <line x1="60" y1="160" x2="120" y2="160" stroke="url(#neonLine6a)" stroke-width="10" filter="url(#glow6)" />
+            <line x1="140" y1="160" x2="200" y2="100" stroke="url(#neonLine6b)" stroke-width="10"
+              filter="url(#glow6)" />
+            <line x1="220" y1="100" x2="280" y2="100" stroke="url(#neonLine6b)" stroke-width="10"
+              filter="url(#glow6)" />
+            <line x1="300" y1="100" x2="360" y2="100" stroke="url(#neonLine6c)" stroke-width="10"
+              filter="url(#glow6)" />
+            <line x1="380" y1="100" x2="440" y2="160" stroke="url(#neonLine6d)" stroke-width="10"
+              filter="url(#glow6)" />
+
+            <!-- S2 -> S5 -> S4 path -->
+            <line x1="220" y1="120" x2="260" y2="160" stroke="url(#neonLine6e)" stroke-width="10"
+              filter="url(#glow6)" />
+            <line x1="280" y1="160" x2="360" y2="120" stroke="url(#neonLine6e)" stroke-width="10"
+              filter="url(#glow6)" />
+
+            <!-- Lower path: S1 -> S6 -> S7/S8 branches -->
+            <line x1="140" y1="180" x2="200" y2="220" stroke="url(#neonLine6f)" stroke-width="10"
+              filter="url(#glow6)" />
+
+            <!-- S6 -> S7 branch -->
+            <line x1="220" y1="220" x2="280" y2="200" stroke="url(#neonLine6f)" stroke-width="10"
+              filter="url(#glow6)" />
+            <line x1="300" y1="200" x2="360" y2="200" stroke="url(#neonLine6f)" stroke-width="10"
+              filter="url(#glow6)" />
+
+            <!-- S7 -> S9 -> S14 -> Sd -->
+            <line x1="300" y1="220" x2="330" y2="250" stroke="url(#neonLine6g)" stroke-width="10"
+              filter="url(#glow6)" />
+            <line x1="350" y1="250" x2="400" y2="240" stroke="url(#neonLine6g)" stroke-width="10"
+              filter="url(#glow6)" />
+            <line x1="420" y1="240" x2="460" y2="180" stroke="url(#neonLine6d)" stroke-width="10"
+              filter="url(#glow6)" />
+
+            <!-- S7 -> S10 -> S14 -->
+            <line x1="300" y1="180" x2="330" y2="150" stroke="url(#neonLine6f)" stroke-width="10"
+              filter="url(#glow6)" />
+            <line x1="350" y1="150" x2="400" y2="220" stroke="url(#neonLine6f)" stroke-width="10"
+              filter="url(#glow6)" />
+
+            <!-- S6 -> S8 branch -->
+            <line x1="220" y1="240" x2="280" y2="260" stroke="url(#neonLine6f)" stroke-width="10"
+              filter="url(#glow6)" />
+
+            <!-- S8 -> S11 -> S13 -> Sd -->
+            <line x1="300" y1="260" x2="350" y2="290" stroke="url(#neonLine6h)" stroke-width="10"
+              filter="url(#glow6)" />
+            <line x1="370" y1="290" x2="420" y2="270" stroke="url(#neonLine6h)" stroke-width="10"
+              filter="url(#glow6)" />
+            <line x1="440" y1="270" x2="460" y2="200" stroke="url(#neonLine6d)" stroke-width="10"
+              filter="url(#glow6)" />
+
+            <!-- S8 -> S12 -> S13 -->
+            <line x1="300" y1="280" x2="350" y2="310" stroke="url(#neonLine6h)" stroke-width="10"
+              filter="url(#glow6)" />
+            <line x1="370" y1="310" x2="420" y2="290" stroke="url(#neonLine6h)" stroke-width="10"
+              filter="url(#glow6)" />
+
+            <!-- Cycle indicators (dashed red lines showing potential cycles) -->
+            <path d="M 360,100 C 380,80 400,100 360,120" stroke="url(#cyclePattern)" stroke-width="4" fill="none"
+              stroke-dasharray="5,5" filter="url(#glow6)" />
+            <path d="M 300,200 C 280,180 260,220 290,240" stroke="url(#cyclePattern)" stroke-width="4" fill="none"
+              stroke-dasharray="5,5" filter="url(#glow6)" />
+
+            <!-- Nodes -->
+            <circle class="graph-node" cx="40" cy="160" r="22" fill="url(#nodeGlowSv6)" stroke="#0ff" stroke-width="4"
+              filter="url(#glow6)" />
+            <circle class="graph-node" cx="130" cy="160" r="22" fill="url(#nodeGlowS1_6)" stroke="#39ff14"
+              stroke-width="4" filter="url(#glow6)" />
+            <circle class="graph-node" cx="210" cy="100" r="22" fill="url(#nodeGlowS2_6)" stroke="#f0f" stroke-width="4"
+              filter="url(#glow6)" />
+            <circle class="graph-node" cx="290" cy="100" r="22" fill="url(#nodeGlowS3_6)" stroke="#ff5500"
+              stroke-width="4" filter="url(#glow6)" />
+            <circle class="graph-node" cx="370" cy="100" r="22" fill="url(#nodeGlowS4_6)" stroke="#ff3399"
+              stroke-width="4" filter="url(#glow6)" />
+            <circle class="graph-node" cx="270" cy="160" r="22" fill="url(#nodeGlowS5_6)" stroke="#ffcc00"
+              stroke-width="4" filter="url(#glow6)" />
+            <circle class="graph-node" cx="210" cy="220" r="22" fill="url(#nodeGlowS6_6)" stroke="#8a2be2"
+              stroke-width="4" filter="url(#glow6)" />
+            <circle class="graph-node" cx="290" cy="200" r="22" fill="url(#nodeGlowS7_6)" stroke="#00ccff"
+              stroke-width="4" filter="url(#glow6)" />
+            <circle class="graph-node" cx="290" cy="260" r="22" fill="url(#nodeGlowS8_6)" stroke="#ff9900"
+              stroke-width="4" filter="url(#glow6)" />
+            <circle class="graph-node" cx="340" cy="250" r="22" fill="url(#nodeGlowS9_6)" stroke="#33cc33"
+              stroke-width="4" filter="url(#glow6)" />
+            <circle class="graph-node" cx="340" cy="150" r="22" fill="url(#nodeGlowS10_6)" stroke="#cc99ff"
+              stroke-width="4" filter="url(#glow6)" />
+            <circle class="graph-node" cx="360" cy="290" r="22" fill="url(#nodeGlowS11_6)" stroke="#66ffff"
+              stroke-width="4" filter="url(#glow6)" />
+            <circle class="graph-node" cx="360" cy="310" r="22" fill="url(#nodeGlowS12_6)" stroke="#ff66b2"
+              stroke-width="4" filter="url(#glow6)" />
+            <circle class="graph-node" cx="430" cy="280" r="22" fill="url(#nodeGlowS13_6)" stroke="#ffcc66"
+              stroke-width="4" filter="url(#glow6)" />
+            <circle class="graph-node" cx="410" cy="240" r="22" fill="url(#nodeGlowS14_6)" stroke="#9966ff"
+              stroke-width="4" filter="url(#glow6)" />
+            <circle class="graph-node" cx="470" cy="160" r="25" fill="url(#nodeGlowSd6)" stroke="#ff0080"
+              stroke-width="4" filter="url(#glow6)" />
+
+            <!-- Node labels -->
+            <text x="40" y="165" text-anchor="middle" font-size="18" fill="#0ff" font-family="Orbitron, Arial">Sv</text>
+            <text x="130" y="165" text-anchor="middle" font-size="18" fill="#39ff14"
+              font-family="Orbitron, Arial">S1</text>
+            <text x="210" y="105" text-anchor="middle" font-size="18" fill="#f0f"
+              font-family="Orbitron, Arial">S2</text>
+            <text x="290" y="105" text-anchor="middle" font-size="18" fill="#ff5500"
+              font-family="Orbitron, Arial">S3</text>
+            <text x="370" y="105" text-anchor="middle" font-size="18" fill="#ff3399"
+              font-family="Orbitron, Arial">S4</text>
+            <text x="270" y="165" text-anchor="middle" font-size="18" fill="#ffcc00"
+              font-family="Orbitron, Arial">S5</text>
+            <text x="210" y="225" text-anchor="middle" font-size="18" fill="#8a2be2"
+              font-family="Orbitron, Arial">S6</text>
+            <text x="290" y="205" text-anchor="middle" font-size="18" fill="#00ccff"
+              font-family="Orbitron, Arial">S7</text>
+            <text x="290" y="265" text-anchor="middle" font-size="18" fill="#ff9900"
+              font-family="Orbitron, Arial">S8</text>
+            <text x="340" y="255" text-anchor="middle" font-size="18" fill="#33cc33"
+              font-family="Orbitron, Arial">S9</text>
+            <text x="340" y="155" text-anchor="middle" font-size="18" fill="#cc99ff"
+              font-family="Orbitron, Arial">S10</text>
+            <text x="360" y="295" text-anchor="middle" font-size="18" fill="#66ffff"
+              font-family="Orbitron, Arial">S11</text>
+            <text x="360" y="315" text-anchor="middle" font-size="18" fill="#ff66b2"
+              font-family="Orbitron, Arial">S12</text>
+            <text x="430" y="285" text-anchor="middle" font-size="18" fill="#ffcc66"
+              font-family="Orbitron, Arial">S13</text>
+            <text x="410" y="245" text-anchor="middle" font-size="18" fill="#9966ff"
+              font-family="Orbitron, Arial">S14</text>
+            <text x="470" y="165" text-anchor="middle" font-size="18" fill="#ff0080"
+              font-family="Orbitron, Arial">Sd</text>
+
+            <!-- Arrows for direction -->
+            <polygon points="110,160 100,154 100,166" fill="#39ff14" stroke="#39ff14" stroke-width="2"
+              filter="url(#glow6)" />
+            <polygon points="185,115 175,109 175,121" fill="#f0f" stroke="#f0f" stroke-width="2" filter="url(#glow6)"
+              transform="rotate(-45, 180, 115)" />
+            <polygon points="265,100 255,94 255,106" fill="#f0f" stroke="#f0f" stroke-width="2" filter="url(#glow6)" />
+            <polygon points="345,100 335,94 335,106" fill="#ff5500" stroke="#ff5500" stroke-width="2"
+              filter="url(#glow6)" />
+            <polygon points="425,145 415,139 415,151" fill="#ff3399" stroke="#ff3399" stroke-width="2"
+              filter="url(#glow6)" transform="rotate(45, 420, 140)" />
+
+            <polygon points="245,145 235,139 235,151" fill="#ffcc00" stroke="#ffcc00" stroke-width="2"
+              filter="url(#glow6)" transform="rotate(45, 240, 140)" />
+            <polygon points="335,145 325,139 325,151" fill="#ffcc00" stroke="#ffcc00" stroke-width="2"
+              filter="url(#glow6)" transform="rotate(-45, 330, 140)" />
+
+            <polygon points="185,205 175,199 175,211" fill="#8a2be2" stroke="#8a2be2" stroke-width="2"
+              filter="url(#glow6)" transform="rotate(45, 180, 200)" />
+            <polygon points="265,200 255,194 255,206" fill="#00ccff" stroke="#00ccff" stroke-width="2"
+              filter="url(#glow6)" />
+
+            <polygon points="315,235 305,229 305,241" fill="#33cc33" stroke="#33cc33" stroke-width="2"
+              filter="url(#glow6)" transform="rotate(30, 310, 235)" />
+            <polygon points="390,240 380,234 380,246" fill="#9966ff" stroke="#9966ff" stroke-width="2"
+              filter="url(#glow6)" />
+            <polygon points="445,200 435,194 435,206" fill="#ff0080" stroke="#ff0080" stroke-width="2"
+              filter="url(#glow6)" transform="rotate(-45, 440, 195)" />
+
+            <polygon points="315,165 305,159 305,171" fill="#cc99ff" stroke="#cc99ff" stroke-width="2"
+              filter="url(#glow6)" transform="rotate(-30, 310, 165)" />
+            <polygon points="385,210 375,204 375,216" fill="#9966ff" stroke="#9966ff" stroke-width="2"
+              filter="url(#glow6)" transform="rotate(45, 380, 215)" />
+
+            <polygon points="265,250 255,244 255,256" fill="#ff9900" stroke="#ff9900" stroke-width="2"
+              filter="url(#glow6)" transform="rotate(15, 260, 250)" />
+            <polygon points="335,285 325,279 325,291" fill="#66ffff" stroke="#66ffff" stroke-width="2"
+              filter="url(#glow6)" transform="rotate(20, 330, 285)" />
+            <polygon points="410,280 400,274 400,286" fill="#ffcc66" stroke="#ffcc66" stroke-width="2"
+              filter="url(#glow6)" />
+            <polygon points="455,215 445,209 445,221" fill="#ff0080" stroke="#ff0080" stroke-width="2"
+              filter="url(#glow6)" transform="rotate(-70, 450, 215)" />
+
+            <polygon points="335,305 325,299 325,311" fill="#ff66b2" stroke="#ff66b2" stroke-width="2"
+              filter="url(#glow6)" transform="rotate(10, 330, 305)" />
+            <polygon points="410,295 400,289 400,301" fill="#ffcc66" stroke="#ffcc66" stroke-width="2"
+              filter="url(#glow6)" transform="rotate(-10, 405, 295)" />
+
+            <!-- Cycle Prevention Indicators -->
+            <circle cx="365" cy="75" r="20" fill="none" stroke="#ff3333" stroke-width="2" stroke-dasharray="5,3"
+              filter="url(#glow6)" />
+            <text x="365" y="80" text-anchor="middle" font-size="20" fill="#ff3333" font-family="Orbitron, Arial"
+              filter="url(#glow6)">✕</text>
+            <circle cx="275" cy="235" r="20" fill="none" stroke="#ff3333" stroke-width="2" stroke-dasharray="5,3"
+              filter="url(#glow6)" />
+            <text x="275" y="240" text-anchor="middle" font-size="20" fill="#ff3333" font-family="Orbitron, Arial"
+              filter="url(#glow6)">✕</text>
+
+            <!-- Path Legend -->
+            <rect x="100" y="30" width="400" height="25" rx="10" fill="rgba(20,20,40,0.7)" stroke="#0ff"
+              stroke-width="1" />
+            <text x="300" y="48" text-anchor="middle" font-size="14" fill="#0ff" font-family="Orbitron, Arial">
+              Découverte dynamique des chemins
+            </text>
+            <rect x="100" y="60" width="400" height="25" rx="10" fill="rgba(20,20,40,0.7)" stroke="#ff3333"
+              stroke-width="1" />
+            <text x="300" y="78" text-anchor="middle" font-size="14" fill="#ff3333" font-family="Orbitron, Arial">
+              Prévention des cycles
+            </text>
+          </svg>
+        </div>
+        <div class="slide-anim anim-conditions">
+          <div class="neon-box">Caractéristiques clés : <br><span>• Détection et prévention des cycles pour éviter les
+              boucles infinies<br>• Découverte
+              dynamique des chemins optimaux<br>• Gestion des capacités variables selon les salles</span></div>
+        </div>
+        <button class="nav-arrow left" id="prevBtn11">&#8592;</button>
+        <button class="nav-arrow right" id="nextBtn11">&#8594;</button>
+      </div>
+    </section>
+    <section class="slide" id="slide12" style="background-image: url('image_12.jpg');">
+      <div class="slide-content slide2-content">
+        <h1 class="neon-title">Implémentation Algorithme 6</h1>
+        <div class="ide-cards-container">
+          <div class="ide-card code-card">
+            <div class="ide-card-header">
+              <div class="ide-dot red"></div>
+              <div class="ide-dot yellow"></div>
+              <div class="ide-dot green"></div>
+              <span class="ide-card-title">fourmiliere_6.cpp</span>
+            </div>
+            <div class="ide-card-content">
+              <pre class="code-block">
+<span class="keyword">class</span> <span class="class-name">Fourmi</span>
+{
+<span class="keyword">public</span>:
+  <span class="type">int</span> <span class="property">id</span>;
+  <span class="type">int</span> <span class="property">chemin</span>;   <span class="comment">// index du chemin choisi</span>
+  <span class="type">int</span> <span class="property">position</span>; <span class="comment">// position sur le chemin</span>
+  <span class="type">bool</span> <span class="property">arrivee</span>;
+  <span class="class-name">Fourmi</span>(<span class="type">int</span> id_, <span class="type">int</span> chemin_) : <span class="property">id</span>(id_), <span class="property">chemin</span>(chemin_), <span class="property">position</span>(0), <span class="property">arrivee</span>(<span class="boolean">false</span>) {}
+};
+
+<span class="keyword">class</span> <span class="class-name">Fourmiliere6</span>
+{
+<span class="keyword">public</span>:
+  <span class="type">std::unordered_map</span><<span class="type">std::string</span>, <span class="type">int</span>> <span class="property">capacites</span> = {
+      {<span class="string">"S1"</span>, 8}, {<span class="string">"S2"</span>, 4}, {<span class="string">"S3"</span>, 2}, {<span class="string">"S4"</span>, 4}, {<span class="string">"S5"</span>, 2}, {<span class="string">"S6"</span>, 4}, {<span class="string">"S7"</span>, 2}, {<span class="string">"S8"</span>, 5}, {<span class="string">"S9"</span>, 1}, {<span class="string">"S10"</span>, 1}, {<span class="string">"S11"</span>, 1}, {<span class="string">"S12"</span>, 1}, {<span class="string">"S13"</span>, 4}, {<span class="string">"S14"</span>, 2}};
+  <span class="type">std::unordered_map</span><<span class="type">std::string</span>, <span class="type">std::vector</span><<span class="type">std::string</span>>> <span class="property">adj</span> = {
+      {<span class="string">"Sv"</span>, {<span class="string">"S1"</span>}},
+      {<span class="string">"S1"</span>, {<span class="string">"S2"</span>, <span class="string">"S6"</span>}},
+      {<span class="string">"S2"</span>, {<span class="string">"S3"</span>, <span class="string">"S5"</span>}},
+      {<span class="string">"S3"</span>, {<span class="string">"S4"</span>}},
+      {<span class="string">"S4"</span>, {<span class="string">"Sd"</span>}},
+      {<span class="string">"S5"</span>, {<span class="string">"S4"</span>}},
+      {<span class="string">"S6"</span>, {<span class="string">"S7"</span>, <span class="string">"S8"</span>}},
+      {<span class="string">"S7"</span>, {<span class="string">"S9"</span>, <span class="string">"S10"</span>}},
+      {<span class="string">"S8"</span>, {<span class="string">"S12"</span>, <span class="string">"S11"</span>}},
+      {<span class="string">"S9"</span>, {<span class="string">"S14"</span>}},
+      {<span class="string">"S10"</span>, {<span class="string">"S14"</span>}},
+      {<span class="string">"S11"</span>, {<span class="string">"S13"</span>}},
+      {<span class="string">"S12"</span>, {<span class="string">"S13"</span>}},
+      {<span class="string">"S13"</span>, {<span class="string">"Sd"</span>}},
+      {<span class="string">"S14"</span>, {<span class="string">"Sd"</span>}}};
+  <span class="type">int</span> <span class="property">nb_fourmis</span>;
+  <span class="type">std::vector</span><<span class="type">std::vector</span><<span class="type">std::string</span>>> <span class="property">chemins</span>;
+  <span class="type">std::vector</span><<span class="type">std::unique_ptr</span><<span class="class-name">Fourmi</span>>> <span class="property">fourmis</span>;
+  <span class="type">std::unordered_map</span><<span class="type">std::string</span>, <span class="type">int</span>> <span class="property">occupation</span>;
+
+  <span class="class-name">Fourmiliere6</span>(<span class="type">int</span> n) : <span class="property">nb_fourmis</span>(n)
+  {
+    <span class="comment">// Initialiser occupation</span>
+    <span class="keyword">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> &kv : <span class="property">capacites</span>)
+      <span class="property">occupation</span>[kv.first] = 0;
+    <span class="comment">// Trouver tous les chemins simples Sv->Sd</span>
+    <span class="type">std::vector</span><<span class="type">std::string</span>> path;
+    <span class="type">std::unordered_set</span><<span class="type">std::string</span>> visited;
+    <span class="function">dfs</span>(<span class="string">"Sv"</span>, path, visited);
+    <span class="comment">// Trier les chemins par longueur croissante</span>
+    <span class="type">std::sort</span>(<span class="property">chemins</span>.begin(), <span class="property">chemins</span>.end(), [](<span class="keyword">const</span> <span class="keyword">auto</span> &a, <span class="keyword">const</span> <span class="keyword">auto</span> &b)
+              { <span class="keyword">return</span> a.size() < b.size(); });
+    <span class="comment">// Répartir les fourmis sur les chemins (plus de fourmis sur les chemins courts et à forte capacité)</span>
+    <span class="type">std::vector</span><<span class="type">int</span>> fourmis_par_chemin(<span class="property">chemins</span>.size(), 0);
+    <span class="keyword">for</span> (<span class="type">int</span> i = 0; i < n; ++i)
+    {
+      <span class="type">int</span> idx = i % <span class="property">chemins</span>.size();
+      <span class="property">fourmis</span>.push_back(<span class="type">std::make_unique</span><<span class="class-name">Fourmi</span>>(i + 1, idx));
+      fourmis_par_chemin[idx]++;
+    }
+  }
+
+  <span class="type">void</span> <span class="function">dfs</span>(<span class="keyword">const</span> <span class="type">std::string</span> &salle, <span class="type">std::vector</span><<span class="type">std::string</span>> &path, <span class="type">std::unordered_set</span><<span class="type">std::string</span>> &visited)
+  {
+    path.push_back(salle);
+    visited.insert(salle);
+    <span class="keyword">if</span> (salle == <span class="string">"Sd"</span>)
+    {
+      <span class="property">chemins</span>.push_back(path);
+    }
+    <span class="keyword">else</span> <span class="keyword">if</span> (<span class="property">adj</span>.count(salle))
+    {
+      <span class="keyword">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> &next : <span class="property">adj</span>[salle])
+      {
+        <span class="keyword">if</span> (!visited.count(next))
+        {
+          <span class="function">dfs</span>(next, path, visited);
+        }
+      }
+    }
+    path.pop_back();
+    visited.erase(salle);
+  }
+
+  <span class="type">void</span> <span class="function">simuler</span>()
+  {
+    <span class="type">int</span> arrived = 0;
+    <span class="type">int</span> step = 0;
+    
+    <span class="keyword">while</span> (arrived < <span class="property">nb_fourmis</span>)
+    {
+      ++step;
+      <span class="comment">// On part de la fin pour éviter les blocages</span>
+      <span class="keyword">for</span> (<span class="type">int</span> i = <span class="property">nb_fourmis</span> - 1; i >= 0; --i)
+      {
+        <span class="class-name">Fourmi</span> *f = <span class="property">fourmis</span>[i].get();
+        <span class="keyword">if</span> (f-><span class="property">arrivee</span>)
+          <span class="keyword">continue</span>;
+        <span class="keyword">const</span> <span class="keyword">auto</span> &chemin = <span class="property">chemins</span>[f-><span class="property">chemin</span>];
+        <span class="type">int</span> pos = f-><span class="property">position</span>;
+        <span class="keyword">if</span> (pos < (<span class="type">int</span>)chemin.size() - 1)
+        {
+          <span class="type">std::string</span> next = chemin[pos + 1];
+          <span class="comment">// Vérifier capacité de la salle suivante (sauf Sd)</span>
+          <span class="keyword">if</span> (next == <span class="string">"Sd"</span> || <span class="property">occupation</span>[next] < <span class="property">capacites</span>[next])
+          {
+            <span class="comment">// Libérer la salle actuelle (sauf Sv)</span>
+            <span class="keyword">if</span> (chemin[pos] != <span class="string">"Sv"</span> && <span class="property">capacites</span>.count(chemin[pos]))
+              <span class="property">occupation</span>[chemin[pos]]--;
+            <span class="comment">// Avancer</span>
+            f-><span class="property">position</span>++;
+            <span class="comment">// Occuper la nouvelle salle (sauf Sd)</span>
+            <span class="keyword">if</span> (chemin[f-><span class="property">position</span>] != <span class="string">"Sd"</span> && <span class="property">capacites</span>.count(chemin[f-><span class="property">position</span>]))
+              <span class="property">occupation</span>[chemin[f-><span class="property">position</span>]]++;
+            <span class="comment">// Marquer arrivée</span>
+            <span class="keyword">if</span> (chemin[f-><span class="property">position</span>] == <span class="string">"Sd"</span>)
+              f-><span class="property">arrivee</span> = <span class="boolean">true</span>;
+          }
+        }
+      }
+      
+      <span class="comment">// Compter les fourmis arrivées</span>
+      arrived = 0;
+      <span class="keyword">for</span> (<span class="type">int</span> i = 0; i < <span class="property">nb_fourmis</span>; ++i)
+      {
+        <span class="keyword">if</span> (<span class="property">fourmis</span>[i]-><span class="property">arrivee</span>)
+          arrived++;
+      }
+    }
+  }
+};</pre>
+            </div>
+          </div>
+
+          <div class="ide-card usage-card">
+            <div class="ide-card-header">
+              <div class="ide-dot red"></div>
+              <div class="ide-dot yellow"></div>
+              <div class="ide-dot green"></div>
+              <span class="ide-card-title">prevention_cycles.md</span>
+            </div>
+            <div class="ide-card-content">
+              <pre class="code-block markdown">
+<span class="md-heading"># Mécanisme de prévention des cycles</span>
+
+<span class="md-bullet">*</span> <span class="md-text">Utilisation d'un algorithme DFS avec un ensemble <span style="color:#39ff14">visited</span> pour découvrir tous les chemins sans cycles</span>
+
+<span class="md-bullet">*</span> <span class="md-text">Pendant la phase d'initialisation, seuls les chemins sans cycles sont enregistrés dans <span style="color:#39ff14">chemins</span></span>
+
+<span class="md-bullet">*</span> <span class="md-text">La méthode <span style="color:#39ff14">dfs</span> utilise backtracking pour explorer l'ensemble du graphe sans revisiter un nœud</span>
+
+<span class="md-bullet">*</span> <span class="md-text">Les fourmis suivent uniquement des chemins pré-validés comme étant sans cycles</span>
+
+<span class="md-bullet">*</span> <span class="md-text">Les chemins sont triés par longueur pour favoriser les itinéraires les plus courts</span>
+              </pre>
+            </div>
+          </div>
+
+          <div class="ide-card method-card">
+            <div class="ide-card-header">
+              <div class="ide-dot red"></div>
+              <div class="ide-dot yellow"></div>
+              <div class="ide-dot green"></div>
+              <span class="ide-card-title">cas_usage.md</span>
+            </div>
+            <div class="ide-card-content">
+              <pre class="code-block markdown">
+<span class="md-heading"># Cas d'usage</span>
+
+<span class="md-bullet">*</span> <span class="md-text">Systèmes de navigation GPS avec découverte dynamique d'itinéraires et évitement des zones congestionnées</span>
+
+<span class="md-bullet">*</span> <span class="md-text">Algorithmes d'exploration de graphes complexes en intelligence artificielle</span>
+
+<span class="md-bullet">*</span> <span class="md-text">Protocoles de routage dynamique dans les réseaux distribués</span>
+
+<span class="md-bullet">*</span> <span class="md-text">Planification de trajectoires pour robots autonomes dans des environnements inconnus</span>
+
+<span class="md-bullet">*</span> <span class="md-text">Algorithmes d'optimisation pour systèmes logistiques complexes avec contraintes de capacité</span>
+              </pre>
+            </div>
+          </div>
+        </div>
+        <button class="nav-arrow left" id="prevBtn12">&#8592;</button>
+        <button class="nav-arrow right" id="nextBtn12">&#8594;</button>
       </div>
     </section>
     <button class="nav-arrow left" id="prevBtn">&#8592;</button>
