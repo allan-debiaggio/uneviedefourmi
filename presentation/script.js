@@ -4,6 +4,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const nextBtn = document.getElementById('nextBtn');
   const prevBtn2 = document.getElementById('prevBtn2');
   const nextBtn2 = document.getElementById('nextBtn2');
+  const prevBtn4 = document.getElementById('prevBtn4');
+  const nextBtn4 = document.getElementById('nextBtn4');
   let current = 0;
 
   function showSlide(idx) {
@@ -31,6 +33,12 @@ document.addEventListener('DOMContentLoaded', () => {
   if (prevBtn2 && nextBtn2) {
     prevBtn2.addEventListener('click', prevSlide);
     nextBtn2.addEventListener('click', nextSlide);
+  }
+
+  // Slide 4 navigation buttons
+  if (prevBtn4 && nextBtn4) {
+    prevBtn4.addEventListener('click', prevSlide);
+    nextBtn4.addEventListener('click', nextSlide);
   }
 
   // Keyboard navigation

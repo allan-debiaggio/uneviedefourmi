@@ -209,6 +209,233 @@
         <button class="nav-arrow right" id="nextBtn2">&#8594;</button>
       </div>
     </section>
+    <section class="slide" id="slide3" style="background-image: url('image_3.jpg');">
+      <div class="slide-content">
+        <div class="slide-anim anim-title">
+          <h1 class="neon-title">Algorithme 2 Chemins parallèles</h1>
+        </div>
+        <div class="slide-anim anim-problem">
+          <h2 class="neon-subtitle">Type de problématique</h2>
+          <p class="neon-desc">L'algorithme qui met en œuvre une approche de traitement parallèle entre deux chemins.
+          </p>
+        </div>
+        <div class="slide-anim anim-graph">
+          <!-- Cyberpunk SVG illustration for dual paths -->
+          <svg class="cyberpunk-graph" width="420" height="200" viewBox="0 0 420 200" fill="none"
+            xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="neonLine2a" x1="0" y1="0" x2="100%" y2="0" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#0ff" />
+                <stop offset="1" stop-color="#39ff14" />
+              </linearGradient>
+              <linearGradient id="neonLine2b" x1="0" y1="0" x2="100%" y2="0" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#0ff" />
+                <stop offset="1" stop-color="#f0f" />
+              </linearGradient>
+              <radialGradient id="nodeGlowSv2" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#222" />
+                <stop offset="80%" stop-color="#0ff" stop-opacity="0.7" />
+                <stop offset="100%" stop-color="#0ff" stop-opacity="0.2" />
+              </radialGradient>
+              <radialGradient id="nodeGlowS1_2" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#222" />
+                <stop offset="80%" stop-color="#39ff14" stop-opacity="0.7" />
+                <stop offset="100%" stop-color="#39ff14" stop-opacity="0.2" />
+              </radialGradient>
+              <radialGradient id="nodeGlowS2_2" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#222" />
+                <stop offset="80%" stop-color="#f0f" stop-opacity="0.7" />
+                <stop offset="100%" stop-color="#f0f" stop-opacity="0.2" />
+              </radialGradient>
+              <radialGradient id="nodeGlowSd2" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#222" />
+                <stop offset="80%" stop-color="#ff0080" stop-opacity="0.7" />
+                <stop offset="100%" stop-color="#ff0080" stop-opacity="0.2" />
+              </radialGradient>
+              <filter id="glow2" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="4" result="coloredBlur" />
+                <feMerge>
+                  <feMergeNode in="coloredBlur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
+
+            <!-- Upper path (Sv -> S1 -> Sd) -->
+            <line x1="100" y1="60" x2="200" y2="60" stroke="url(#neonLine2a)" stroke-width="10" filter="url(#glow2)" />
+            <line x1="240" y1="60" x2="370" y2="100" stroke="url(#neonLine2a)" stroke-width="10" filter="url(#glow2)" />
+
+            <!-- Lower path (Sv -> S2 -> Sd) -->
+            <line x1="100" y1="140" x2="200" y2="140" stroke="url(#neonLine2b)" stroke-width="10"
+              filter="url(#glow2)" />
+            <line x1="240" y1="140" x2="370" y2="100" stroke="url(#neonLine2b)" stroke-width="10"
+              filter="url(#glow2)" />
+
+            <!-- Nodes with neon radial gradient -->
+            <circle class="graph-node" cx="90" cy="100" r="25" fill="url(#nodeGlowSv2)" stroke="#0ff" stroke-width="4"
+              filter="url(#glow2)" />
+            <circle class="graph-node" cx="220" cy="60" r="22" fill="url(#nodeGlowS1_2)" stroke="#39ff14"
+              stroke-width="4" filter="url(#glow2)" />
+            <circle class="graph-node" cx="220" cy="140" r="22" fill="url(#nodeGlowS2_2)" stroke="#f0f" stroke-width="4"
+              filter="url(#glow2)" />
+            <circle class="graph-node" cx="380" cy="100" r="25" fill="url(#nodeGlowSd2)" stroke="#ff0080"
+              stroke-width="4" filter="url(#glow2)" />
+
+            <!-- Connecting lines from Sv -->
+            <line x1="95" y1="90" x2="95" y2="60" stroke="url(#neonLine2a)" stroke-width="8" filter="url(#glow2)" />
+            <line x1="95" y1="110" x2="95" y2="140" stroke="url(#neonLine2b)" stroke-width="8" filter="url(#glow2)" />
+
+            <!-- Neon Arrows - removed arrows on Sv and Sd -->
+            <polygon points="185,60 175,54 175,66" fill="#39ff14" stroke="#39ff14" stroke-width="2"
+              filter="url(#glow2)" />
+            <polygon points="185,140 175,134 175,146" fill="#f0f" stroke="#f0f" stroke-width="2" filter="url(#glow2)" />
+
+            <!-- Labels -->
+            <text x="90" y="105" text-anchor="middle" font-size="18" fill="#0ff" font-family="Orbitron, Arial">Sv</text>
+            <text x="220" y="65" text-anchor="middle" font-size="18" fill="#39ff14"
+              font-family="Orbitron, Arial">S1</text>
+            <text x="220" y="145" text-anchor="middle" font-size="18" fill="#f0f"
+              font-family="Orbitron, Arial">S2</text>
+            <text x="380" y="105" text-anchor="middle" font-size="18" fill="#ff0080"
+              font-family="Orbitron, Arial">Sd</text>
+          </svg>
+        </div>
+        <div class="slide-anim anim-conditions">
+          <div class="neon-box">Caractéristiques clés : <br><span>• Répartition équilibrée des fourmis entre deux
+              chemins<br>• Une seule fourmi peut occuper <b>S1</b> et <b>S2</b> simultanément<br>• Optimisation du temps
+              total de parcours</span></div>
+        </div>
+      </div>
+    </section>
+    <section class="slide" id="slide4" style="background-image: url('image_4.jpg');">
+      <div class="slide-content slide2-content">
+        <h1 class="neon-title">Implémentation Algorithme 2</h1>
+        <div class="ide-cards-container">
+          <div class="ide-card code-card">
+            <div class="ide-card-header">
+              <div class="ide-dot red"></div>
+              <div class="ide-dot yellow"></div>
+              <div class="ide-dot green"></div>
+              <span class="ide-card-title">fourmiliere_2.cpp</span>
+            </div>
+            <div class="ide-card-content">
+              <pre class="code-block">
+<span class="keyword">class</span> <span class="class-name">Fourmi</span> {
+<span class="keyword">public</span>:
+  <span class="type">int</span> <span class="property">id</span>;
+  <span class="type">int</span> <span class="property">position</span>; <span class="comment">// index du chemin sur lequel elle se trouve</span>
+  <span class="type">int</span> <span class="property">chemin</span>;   <span class="comment">// 0 pour Sv->S1->Sd, 1 pour Sv->S2->Sd</span>
+  <span class="type">bool</span> <span class="property">arrivee</span>;
+  <span class="class-name">Fourmi</span>(<span class="type">int</span> id_, <span class="type">int</span> chemin_) : <span class="property">id</span>(id_), <span class="property">position</span>(0), <span class="property">chemin</span>(chemin_), <span class="property">arrivee</span>(<span class="boolean">false</span>) {}
+};
+
+<span class="keyword">class</span> <span class="class-name">Fourmiliere2</span> {
+<span class="keyword">public</span>:
+  <span class="type">std::vector</span><<span class="type">std::vector</span><<span class="type">std::string</span>>> <span class="property">chemins</span> = {
+      {<span class="string">"Sv"</span>, <span class="string">"S1"</span>, <span class="string">"Sd"</span>},
+      {<span class="string">"Sv"</span>, <span class="string">"S2"</span>, <span class="string">"Sd"</span>}};
+  <span class="type">std::vector</span><<span class="type">std::unique_ptr</span><<span class="class-name">Fourmi</span>>> <span class="property">fourmis</span>;
+  <span class="type">int</span> <span class="property">occupation</span>[2] = {0, 0}; <span class="comment">// occupation[0] pour S1, occupation[1] pour S2</span>
+  <span class="type">int</span> <span class="property">nb_fourmis</span>;
+
+  <span class="class-name">Fourmiliere2</span>(<span class="type">int</span> n) : <span class="property">nb_fourmis</span>(n) {
+    <span class="comment">// Répartition équilibrée des fourmis sur les deux chemins</span>
+    <span class="keyword">for</span> (<span class="type">int</span> i = 0; i < n; ++i) {
+      <span class="type">int</span> ch = (i % 2 == 0) ? 0 : 1;
+      <span class="property">fourmis</span>.push_back(<span class="type">std::make_unique</span><<span class="class-name">Fourmi</span>>(i + 1, ch));
+    }
+  }
+
+  <span class="type">void</span> <span class="function">simuler</span>() {
+    <span class="type">int</span> arrived = 0;
+    <span class="type">int</span> step = 0;
+    <span class="keyword">while</span> (arrived < <span class="property">nb_fourmis</span>) {
+      ++step;
+      <span class="comment">// Libérer les salles S1/S2 (on le fait avant de déplacer)</span>
+      <span class="property">occupation</span>[0] = 0;
+      <span class="property">occupation</span>[1] = 0;
+      
+      <span class="comment">// On part de la fin pour éviter les collisions</span>
+      <span class="keyword">for</span> (<span class="type">int</span> i = <span class="property">nb_fourmis</span> - 1; i >= 0; --i) {
+        <span class="class-name">Fourmi</span> *f = <span class="property">fourmis</span>[i].get();
+        <span class="keyword">if</span> (f-><span class="property">arrivee</span>)
+          <span class="keyword">continue</span>;
+          
+        <span class="type">int</span> pos = f-><span class="property">position</span>;
+        <span class="type">int</span> ch = f-><span class="property">chemin</span>;
+        
+        <span class="comment">// Si pas encore à Sd</span>
+        <span class="keyword">if</span> (pos < 2) {
+          <span class="comment">// Vérifier si la salle suivante est libre (Sd toujours libre)</span>
+          <span class="keyword">if</span> (<span class="property">chemins</span>[ch][pos + 1] == <span class="string">"Sd"</span> || <span class="property">occupation</span>[ch] == 0) {
+            f-><span class="property">position</span>++;
+            <span class="keyword">if</span> (<span class="property">chemins</span>[ch][f-><span class="property">position</span>] == <span class="string">"Sd"</span>) {
+              f-><span class="property">arrivee</span> = <span class="boolean">true</span>;
+            } <span class="keyword">else</span> {
+              <span class="property">occupation</span>[ch] = 1; <span class="comment">// occuper S1 ou S2</span>
+            }
+          }
+        }
+      }
+      
+      <span class="comment">// Compter les fourmis arrivées</span>
+      arrived = 0;
+      <span class="keyword">for</span> (<span class="type">int</span> i = 0; i < <span class="property">nb_fourmis</span>; ++i) {
+        <span class="keyword">if</span> (<span class="property">fourmis</span>[i]-><span class="property">arrivee</span>)
+          arrived++;
+      }
+    }
+  }
+};</pre>
+            </div>
+          </div>
+
+          <div class="ide-card usage-card">
+            <div class="ide-card-header">
+              <div class="ide-dot red"></div>
+              <div class="ide-dot yellow"></div>
+              <div class="ide-dot green"></div>
+              <span class="ide-card-title">differences.md</span>
+            </div>
+            <div class="ide-card-content">
+              <pre class="code-block markdown">
+<span class="md-heading"># Différences avec l'Algorithme 1</span>
+
+<span class="md-bullet">*</span> <span class="md-text">Ajout d'un identifiant de chemin (chemin, 0 ou 1) parmi les attributs de la classe Fourmi</span>
+
+<span class="md-bullet">*</span> <span class="md-text">Les fourmis sont réparties de manière équitable entre les deux chemins selon leur index</span>
+
+<span class="md-bullet">*</span> <span class="md-text">Dans la méthode simuler(), les salles S1 et S2 sont libérées au début de chaque étape</span>
+              </pre>
+            </div>
+          </div>
+
+          <div class="ide-card method-card">
+            <div class="ide-card-header">
+              <div class="ide-dot red"></div>
+              <div class="ide-dot yellow"></div>
+              <div class="ide-dot green"></div>
+              <span class="ide-card-title">cas_usage.md</span>
+            </div>
+            <div class="ide-card-content">
+              <pre class="code-block markdown">
+<span class="md-heading"># Cas d'usage</span>
+
+<span class="md-bullet">*</span> <span class="md-text">Équilibrage de charge (load balancing) pour répartir la charge entre différents serveurs</span>
+
+<span class="md-bullet">*</span> <span class="md-text">Optimisation du trafic réseau avec plusieurs chemins de routage</span>
+
+<span class="md-bullet">*</span> <span class="md-text">Systèmes de distribution avec plusieurs canaux parallèles</span>
+
+<span class="md-bullet">*</span> <span class="md-text">Gestion de files d'attente multiples dans les systèmes transactionnels</span>
+              </pre>
+            </div>
+          </div>
+        </div>
+        <button class="nav-arrow left" id="prevBtn4">&#8592;</button>
+        <button class="nav-arrow right" id="nextBtn4">&#8594;</button>
+      </div>
+    </section>
     <button class="nav-arrow left" id="prevBtn">&#8592;</button>
     <button class="nav-arrow right" id="nextBtn">&#8594;</button>
   </div>
