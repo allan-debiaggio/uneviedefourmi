@@ -629,3 +629,43 @@ body {
   max-width: 700px;
   margin: 0 auto 1.5rem auto;
 }
+
+/* Specific styling for slide 5 */
+#slide5 .cyberpunk-graph {
+  margin: 1.5rem auto 2rem auto;
+  height: auto;
+  width: 100%;
+  max-width: 500px;
+  background: rgba(10, 10, 30, 0.5);
+  border-radius: 1.2rem;
+  box-shadow: 0 0 30px rgba(0, 255, 255, 0.5), 0 0 60px rgba(255, 0, 255, 0.4);
+  transition: all 0.3s ease;
+}
+
+#slide5 .cyberpunk-graph:hover {
+  transform: scale(1.02);
+  box-shadow: 0 0 40px rgba(0, 255, 255, 0.6), 0 0 80px rgba(255, 0, 255, 0.5), 0 0 30px rgba(255, 51, 51, 0.5);
+}
+
+#slide5 .cyberpunk-graph path {
+  animation: pathPulse 4s infinite;
+}
+
+@keyframes pathPulse {
+  0% {
+    stroke-width: 10px;
+  }
+
+  50% {
+    stroke-width: 12px;
+  }
+
+  100% {
+    stroke-width: 10px;
+  }
+}
+
+#slide5 .neon-desc {
+  max-width: 700px;
+  margin: 0 auto 1.5rem auto;
+}

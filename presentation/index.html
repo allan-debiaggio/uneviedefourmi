@@ -436,6 +436,248 @@
         <button class="nav-arrow right" id="nextBtn4">&#8594;</button>
       </div>
     </section>
+    <section class="slide" id="slide5" style="background-image: url('image_5.jpg');">
+      <div class="slide-content">
+        <div class="slide-anim anim-title">
+          <h1 class="neon-title">Algorithme 3 Gestion du comportement cyclique</h1>
+        </div>
+        <div class="slide-anim anim-problem">
+          <h2 class="neon-subtitle">Type de problématique</h2>
+          <p class="neon-desc">Algorithme mettant en œuvre un mécanisme de terminaison spécifique pour éviter les
+            comportements cycliques.</p>
+        </div>
+        <div class="slide-anim anim-graph">
+          <!-- Cyberpunk SVG illustration for cyclic path -->
+          <svg class="cyberpunk-graph" width="420" height="160" viewBox="0 0 420 160" fill="none"
+            xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="neonLine3a" x1="0" y1="60" x2="150" y2="60" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#0ff" />
+                <stop offset="1" stop-color="#39ff14" />
+              </linearGradient>
+              <linearGradient id="neonLine3b" x1="150" y1="60" x2="270" y2="60" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#39ff14" />
+                <stop offset="1" stop-color="#f0f" />
+              </linearGradient>
+              <linearGradient id="neonLine3c" x1="270" y1="60" x2="380" y2="60" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#f0f" />
+                <stop offset="1" stop-color="#ff0080" />
+              </linearGradient>
+              <linearGradient id="neonLine3d" x1="380" y1="60" x2="80" y2="120" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#ff0080" />
+                <stop offset="1" stop-color="#0ff" />
+              </linearGradient>
+              <radialGradient id="nodeGlowSv3" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#222" />
+                <stop offset="80%" stop-color="#0ff" stop-opacity="0.7" />
+                <stop offset="100%" stop-color="#0ff" stop-opacity="0.2" />
+              </radialGradient>
+              <radialGradient id="nodeGlowS1_3" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#222" />
+                <stop offset="80%" stop-color="#39ff14" stop-opacity="0.7" />
+                <stop offset="100%" stop-color="#39ff14" stop-opacity="0.2" />
+              </radialGradient>
+              <radialGradient id="nodeGlowS2_3" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#222" />
+                <stop offset="80%" stop-color="#f0f" stop-opacity="0.7" />
+                <stop offset="100%" stop-color="#f0f" stop-opacity="0.2" />
+              </radialGradient>
+              <radialGradient id="nodeGlowSd3" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#222" />
+                <stop offset="80%" stop-color="#ff0080" stop-opacity="0.7" />
+                <stop offset="100%" stop-color="#ff0080" stop-opacity="0.2" />
+              </radialGradient>
+              <filter id="glow3" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="4" result="coloredBlur" />
+                <feMerge>
+                  <feMergeNode in="coloredBlur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
+
+            <!-- Forward path (Sv -> S1 -> S2 -> Sd) -->
+            <line x1="80" y1="60" x2="150" y2="60" stroke="url(#neonLine3a)" stroke-width="10" filter="url(#glow3)" />
+            <line x1="180" y1="60" x2="240" y2="60" stroke="url(#neonLine3b)" stroke-width="10" filter="url(#glow3)" />
+            <line x1="270" y1="60" x2="340" y2="60" stroke="url(#neonLine3c)" stroke-width="10" filter="url(#glow3)" />
+
+            <!-- Return path (Sd -> Sv) with upward arc -->
+            <path d="M 380 60 C 380 20 80 20 80 60" stroke="url(#neonLine3d)" stroke-width="10" fill="none"
+              filter="url(#glow3)" />
+
+            <!-- Nodes with neon radial gradient -->
+            <circle class="graph-node" cx="50" cy="60" r="22" fill="url(#nodeGlowSv3)" stroke="#0ff" stroke-width="4"
+              filter="url(#glow3)" />
+            <circle class="graph-node" cx="165" cy="60" r="22" fill="url(#nodeGlowS1_3)" stroke="#39ff14"
+              stroke-width="4" filter="url(#glow3)" />
+            <circle class="graph-node" cx="255" cy="60" r="22" fill="url(#nodeGlowS2_3)" stroke="#f0f" stroke-width="4"
+              filter="url(#glow3)" />
+            <circle class="graph-node" cx="370" cy="60" r="22" fill="url(#nodeGlowSd3)" stroke="#ff0080"
+              stroke-width="4" filter="url(#glow3)" />
+
+            <!-- Neon Arrows -->
+            <polygon points="140,60 130,54 130,66" fill="#39ff14" stroke="#39ff14" stroke-width="2"
+              filter="url(#glow3)" />
+            <polygon points="230,60 220,54 220,66" fill="#f0f" stroke="#f0f" stroke-width="2" filter="url(#glow3)" />
+            <polygon points="330,60 320,54 320,66" fill="#ff0080" stroke="#ff0080" stroke-width="2"
+              filter="url(#glow3)" />
+            <polygon points="95,40 85,45 95,50" fill="#0ff" stroke="#0ff" stroke-width="2" filter="url(#glow3)"
+              transform="rotate(-10, 90, 45)" />
+
+            <!-- Termination indicator - red barrier/stop sign across return path -->
+            <line x1="200" y1="25" x2="260" y2="15" stroke="#ff3333" stroke-width="4" stroke-dasharray="5,3"
+              filter="url(#glow3)" />
+            <circle cx="230" cy="20" r="12" fill="#331111" stroke="#ff3333" stroke-width="2" filter="url(#glow3)" />
+            <text x="230" y="24" text-anchor="middle" font-size="14" fill="#ff3333" font-family="Orbitron, Arial"
+              filter="url(#glow3)">✕</text>
+
+            <!-- Labels -->
+            <text x="50" y="65" text-anchor="middle" font-size="18" fill="#0ff" font-family="Orbitron, Arial">Sv</text>
+            <text x="165" y="65" text-anchor="middle" font-size="18" fill="#39ff14"
+              font-family="Orbitron, Arial">S1</text>
+            <text x="255" y="65" text-anchor="middle" font-size="18" fill="#f0f" font-family="Orbitron, Arial">S2</text>
+            <text x="370" y="65" text-anchor="middle" font-size="18" fill="#ff0080"
+              font-family="Orbitron, Arial">Sd</text>
+          </svg>
+        </div>
+        <div class="slide-anim anim-conditions">
+          <div class="neon-box">Caractéristiques clés : <br><span>• Structure cyclique potentielle avec retour de Sd
+              vers Sv<br>• Mécanisme de terminaison empêchant les fourmis de repartir après avoir atteint Sd<br>• Permet
+              d'éviter les boucles infinies dans le parcours</span></div>
+        </div>
+      </div>
+    </section>
+    <section class="slide" id="slide6" style="background-image: url('image_6.jpg');">
+      <div class="slide-content slide2-content">
+        <h1 class="neon-title">Implémentation Algorithme 3</h1>
+        <div class="ide-cards-container">
+          <div class="ide-card code-card">
+            <div class="ide-card-header">
+              <div class="ide-dot red"></div>
+              <div class="ide-dot yellow"></div>
+              <div class="ide-dot green"></div>
+              <span class="ide-card-title">fourmiliere_3.cpp</span>
+            </div>
+            <div class="ide-card-content">
+              <pre class="code-block">
+<span class="keyword">class</span> <span class="class-name">Fourmi</span> {
+<span class="keyword">public</span>:
+  <span class="type">int</span> <span class="property">id</span>;
+  <span class="type">int</span> <span class="property">position</span>; <span class="comment">// index dans le chemin</span>
+  <span class="type">bool</span> <span class="property">arrivee</span>;  <span class="comment">// indicateur binaire d'arrivée</span>
+  <span class="class-name">Fourmi</span>(<span class="type">int</span> id_) : <span class="property">id</span>(id_), <span class="property">position</span>(0), <span class="property">arrivee</span>(<span class="boolean">false</span>) {}
+};
+
+<span class="keyword">class</span> <span class="class-name">Fourmiliere3</span> {
+<span class="keyword">public</span>:
+  <span class="type">std::vector</span><<span class="type">std::string</span>> <span class="property">chemin</span>;
+  <span class="type">std::vector</span><<span class="type">std::unique_ptr</span><<span class="class-name">Fourmi</span>>> <span class="property">fourmis</span>;
+  <span class="type">std::vector</span><<span class="type">int</span>> <span class="property">occupation</span>; <span class="comment">// 0 = libre, 1 = occupée</span>
+  <span class="type">int</span> <span class="property">nb_fourmis</span>;
+
+  <span class="class-name">Fourmiliere3</span>(<span class="type">int</span> n) : <span class="property">nb_fourmis</span>(n) {
+    <span class="property">chemin</span> = {<span class="string">"Sv"</span>, <span class="string">"S1"</span>, <span class="string">"S2"</span>, <span class="string">"Sd"</span>};
+    <span class="property">occupation</span> = <span class="type">std::vector</span><<span class="type">int</span>>(<span class="property">chemin</span>.size(), 0);
+    <span class="keyword">for</span> (<span class="type">int</span> i = 0; i < n; ++i) {
+      <span class="property">fourmis</span>.push_back(<span class="type">std::make_unique</span><<span class="class-name">Fourmi</span>>(i + 1));
+    }
+  }
+
+  <span class="type">void</span> <span class="function">simuler</span>() {
+    <span class="type">int</span> arrived = 0;
+    <span class="type">int</span> step = 0;
+    <span class="keyword">while</span> (arrived < <span class="property">nb_fourmis</span>) {
+      ++step;
+      <span class="comment">// On part de la fin pour éviter les collisions</span>
+      <span class="keyword">for</span> (<span class="type">int</span> i = <span class="property">nb_fourmis</span> - 1; i >= 0; --i) {
+        <span class="class-name">Fourmi</span> *f = <span class="property">fourmis</span>[i].get();
+        
+        <span class="comment">// Ignorer les fourmis déjà arrivées</span>
+        <span class="keyword">if</span> (f-><span class="property">arrivee</span>)
+          <span class="keyword">continue</span>;
+          
+        <span class="type">int</span> pos = f-><span class="property">position</span>;
+        <span class="keyword">if</span> (pos < (<span class="type">int</span>)<span class="property">chemin</span>.size() - 1) {
+          <span class="comment">// Vérifier disponibilité de la salle suivante</span>
+          <span class="keyword">if</span> (<span class="property">chemin</span>[pos + 1] == <span class="string">"Sd"</span> || <span class="property">occupation</span>[pos + 1] == 0) {
+            <span class="comment">// Libérer la salle actuelle (sauf Sv)</span>
+            <span class="keyword">if</span> (<span class="property">chemin</span>[pos] != <span class="string">"Sv"</span>)
+              <span class="property">occupation</span>[pos] = 0;
+              
+            <span class="comment">// Avancer</span>
+            f-><span class="property">position</span>++;
+            
+            <span class="comment">// Occuper la nouvelle salle (sauf Sd)</span>
+            <span class="keyword">if</span> (<span class="property">chemin</span>[f-><span class="property">position</span>] != <span class="string">"Sd"</span>)
+              <span class="property">occupation</span>[f-><span class="property">position</span>] = 1;
+              
+            <span class="comment">// Marquer définitivement l'arrivée</span>
+            <span class="keyword">if</span> (<span class="property">chemin</span>[f-><span class="property">position</span>] == <span class="string">"Sd"</span>)
+              f-><span class="property">arrivee</span> = <span class="boolean">true</span>;
+          }
+        }
+      }
+      
+      <span class="comment">// Compter les fourmis arrivées</span>
+      arrived = 0;
+      <span class="keyword">for</span> (<span class="type">int</span> i = 0; i < <span class="property">nb_fourmis</span>; ++i) {
+        <span class="keyword">if</span> (<span class="property">fourmis</span>[i]-><span class="property">arrivee</span>)
+          arrived++;
+      }
+    }
+  }
+};</pre>
+            </div>
+          </div>
+
+          <div class="ide-card usage-card">
+            <div class="ide-card-header">
+              <div class="ide-dot red"></div>
+              <div class="ide-dot yellow"></div>
+              <div class="ide-dot green"></div>
+              <span class="ide-card-title">differences.md</span>
+            </div>
+            <div class="ide-card-content">
+              <pre class="code-block markdown">
+<span class="md-heading"># Différences avec l'Algorithme 1</span>
+
+<span class="md-bullet">*</span> <span class="md-text">Chaque fourmi possède un indicateur binaire <span style="color:#39ff14">arrivee</span>, initialisé à <span style="color:#bd93f9">false</span></span>
+
+<span class="md-bullet">*</span> <span class="md-text">Lorsqu'une fourmi atteint la destination « Sd », son indicateur <span style="color:#39ff14">arrivee</span> est définitivement mis à <span style="color:#bd93f9">true</span></span>
+
+<span class="md-bullet">*</span> <span class="md-text">Les fourmis marquées comme arrivées sont ignorées dans tous les traitements ultérieurs</span>
+
+<span class="md-bullet">*</span> <span class="md-text">Même dans un graphe cyclique (avec retour de Sd vers Sv), les fourmis ne peuvent pas refaire le circuit</span>
+              </pre>
+            </div>
+          </div>
+
+          <div class="ide-card method-card">
+            <div class="ide-card-header">
+              <div class="ide-dot red"></div>
+              <div class="ide-dot yellow"></div>
+              <div class="ide-dot green"></div>
+              <span class="ide-card-title">cas_usage.md</span>
+            </div>
+            <div class="ide-card-content">
+              <pre class="code-block markdown">
+<span class="md-heading"># Cas d'usage</span>
+
+<span class="md-bullet">*</span> <span class="md-text">Systèmes de transport en commun (ticket 'validé' empêche l'usage infini du même titre de transport)</span>
+
+<span class="md-bullet">*</span> <span class="md-text">Mécanismes d'accès à usage unique (codes QR pour événements, jetons d'entrée)</span>
+
+<span class="md-bullet">*</span> <span class="md-text">Processus de validation avec étapes irréversibles (examens, certifications)</span>
+
+<span class="md-bullet">*</span> <span class="md-text">Protection contre la réutilisation de ressources épuisées</span>
+              </pre>
+            </div>
+          </div>
+        </div>
+        <button class="nav-arrow left" id="prevBtn6">&#8592;</button>
+        <button class="nav-arrow right" id="nextBtn6">&#8594;</button>
+      </div>
+    </section>
     <button class="nav-arrow left" id="prevBtn">&#8592;</button>
     <button class="nav-arrow right" id="nextBtn">&#8594;</button>
   </div>
