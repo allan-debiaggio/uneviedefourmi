@@ -80,58 +80,57 @@ public:
     visited.erase(room);
   }
 
-  void simulate() override
+  void move_ant(int i) override
   {
-    int arrived_count = 0;
-    int step = 0;
-    std::cout << "Déplacement des fourmis dans la fourmilière 6 (optimisation, capacités, anti-cycles) :" << std::endl;
-    while (arrived_count < num_ants)
+    Ant6 *ant = static_cast<Ant6 *>(ants[i].get());
+    if (ant->arrived)
+      return;
+    const auto &path = paths[ant->path_index];
+    int pos = ant->position;
+    if (pos < (int)path.size() - 1)
     {
-      ++step;
-      // Process from the end to avoid deadlocks
-      for (int i = num_ants - 1; i >= 0; --i)
+      std::string next = path[pos + 1];
+      // Check capacity of the next room (except Sd)
+      if (next == "Sd" || occupancy[next] < capacities[next])
       {
-        Ant6 *ant = static_cast<Ant6 *>(ants[i].get());
-        if (ant->arrived)
-          continue;
-        const auto &path = paths[ant->path_index];
-        int pos = ant->position;
-        if (pos < (int)path.size() - 1)
-        {
-          std::string next = path[pos + 1];
-          // Check capacity of the next room (except Sd)
-          if (next == "Sd" || occupancy[next] < capacities[next])
-          {
-            // Free the current room (except Sv)
-            if (path[pos] != "Sv" && capacities.count(path[pos]))
-              occupancy[path[pos]]--;
-            // Move forward
-            ant->position++;
-            // Occupy the new room (except Sd)
-            if (path[ant->position] != "Sd" && capacities.count(path[ant->position]))
-              occupancy[path[ant->position]]++;
-            // Mark as arrived
-            if (path[ant->position] == "Sd")
-              ant->arrived = true;
-          }
-        }
-      }
-      // Display
-      std::cout << "\nÉtape " << step << ": ";
-      for (int i = 0; i < num_ants; ++i)
-      {
-        Ant6 *ant = static_cast<Ant6 *>(ants[i].get());
-        const auto &path = paths[ant->path_index];
-        std::cout << "F" << ant->id << "(" << path[ant->position] << ") ";
-      }
-      // Count arrived ants
-      arrived_count = 0;
-      for (int i = 0; i < num_ants; ++i)
-      {
-        if (ants[i]->arrived)
-          arrived_count++;
+        // Free the current room (except Sv)
+        if (path[pos] != "Sv" && capacities.count(path[pos]))
+          occupancy[path[pos]]--;
+        // Move forward
+        ant->position++;
+        // Occupy the new room (except Sd)
+        if (path[ant->position] != "Sd" && capacities.count(path[ant->position]))
+          occupancy[path[ant->position]]++;
+        // Mark as arrived
+        if (path[ant->position] == "Sd")
+          ant->arrived = true;
       }
     }
+  }
+
+  bool is_finished() override
+  {
+    for (int i = 0; i < num_ants; ++i)
+    {
+      if (!ants[i]->arrived)
+        return false;
+    }
+    return true;
+  }
+
+  void print_state(int step) override
+  {
+    std::cout << "\nÉtape " << step << ": ";
+    for (int i = 0; i < num_ants; ++i)
+    {
+      Ant6 *ant = static_cast<Ant6 *>(ants[i].get());
+      const auto &path = paths[ant->path_index];
+      std::cout << "F" << ant->id << "(" << path[ant->position] << ") ";
+    }
+  }
+
+  void print_summary(int step) override
+  {
     std::cout << "\n\nToutes les fourmis sont arrivées en " << step << " étapes." << std::endl;
   }
 };

@@ -29,58 +29,54 @@ public:
     }
   }
 
-  void simulate() override
+  void move_ant(int i) override
   {
-    int arrived_count = 0;
-    int step = 0;
-    std::cout << "Déplacement des fourmis dans la fourmilière 2 (une seule fourmi par salle S1/S2) :" << std::endl;
-    while (arrived_count < num_ants)
+    Ant2 *ant = static_cast<Ant2 *>(ants[i].get());
+    if (ant->arrived)
+      return;
+    int pos = ant->position;
+    int path_idx = ant->path_index;
+    // Si pas encore à Sd
+    if (pos < 2)
     {
-      ++step;
-      // Libérer les salles S1/S2 (on le fait avant de déplacer)
-      occupancy[0] = 0;
-      occupancy[1] = 0;
-      // On part de la fin pour éviter les collisions
-      for (int i = num_ants - 1; i >= 0; --i)
+      // Vérifier si la salle suivante est libre (Sd toujours libre)
+      if (paths[path_idx][pos + 1] == "Sd" || occupancy[path_idx] == 0)
       {
-        Ant2 *ant = static_cast<Ant2 *>(ants[i].get());
-        if (ant->arrived)
-          continue;
-        int pos = ant->position;
-        int path_idx = ant->path_index;
-        // Si pas encore à Sd
-        if (pos < 2)
+        ant->position++;
+        if (paths[path_idx][ant->position] == "Sd")
         {
-          // Vérifier si la salle suivante est libre (Sd toujours libre)
-          if (paths[path_idx][pos + 1] == "Sd" || occupancy[path_idx] == 0)
-          {
-            ant->position++;
-            if (paths[path_idx][ant->position] == "Sd")
-            {
-              ant->arrived = true;
-            }
-            else
-            {
-              occupancy[path_idx] = 1; // occuper S1 ou S2
-            }
-          }
+          ant->arrived = true;
+        }
+        else
+        {
+          occupancy[path_idx] = 1; // occuper S1 ou S2
         }
       }
-      // Affichage
-      std::cout << "\nÉtape " << step << ": ";
-      for (int i = 0; i < num_ants; ++i)
-      {
-        Ant2 *ant = static_cast<Ant2 *>(ants[i].get());
-        std::cout << "F" << ant->id << "(" << paths[ant->path_index][ant->position] << ") ";
-      }
-      // Compter les fourmis arrivées
-      arrived_count = 0;
-      for (int i = 0; i < num_ants; ++i)
-      {
-        if (ants[i]->arrived)
-          arrived_count++;
-      }
     }
+  }
+
+  bool is_finished() override
+  {
+    for (int i = 0; i < num_ants; ++i)
+    {
+      if (!ants[i]->arrived)
+        return false;
+    }
+    return true;
+  }
+
+  void print_state(int step) override
+  {
+    std::cout << "\nÉtape " << step << ": ";
+    for (int i = 0; i < num_ants; ++i)
+    {
+      Ant2 *ant = static_cast<Ant2 *>(ants[i].get());
+      std::cout << "F" << ant->id << "(" << paths[ant->path_index][ant->position] << ") ";
+    }
+  }
+
+  void print_summary(int step) override
+  {
     std::cout << "\n\nToutes les fourmis sont arrivées en " << step << " étapes." << std::endl;
   }
 };
