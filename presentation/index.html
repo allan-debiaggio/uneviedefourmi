@@ -1973,6 +1973,82 @@
         <button class="nav-arrow right" id="nextBtn12">&#8594;</button>
       </div>
     </section>
+    <section class="slide" id="slide-refactored-header" style="background-image: url('image_5.jpg');">
+      <div class="slide-content slide2-content">
+        <h1 class="neon-title">Refactored codebase</h1>
+        <div class="ide-cards-container">
+          <div class="ide-card code-card">
+            <div class="ide-card-header">
+              <div class="ide-dot red"></div>
+              <div class="ide-dot yellow"></div>
+              <div class="ide-dot green"></div>
+              <span class="ide-card-title">AntColonyBase.h</span>
+            </div>
+            <div class="ide-card-content">
+              <pre class="code-block">
+<span class="keyword">class</span> <span class="class-name">Ant</span> {
+<span class="keyword">public</span>:
+  <span class="type">int</span> <span class="property">id</span>;
+  <span class="type">int</span> <span class="property">position</span>;
+  <span class="type">bool</span> <span class="property">arrived</span>;
+  <span class="class-name">Ant</span>(<span class="type">int</span> id_) : <span class="property">id</span>(id_), <span class="property">position</span>(0), <span class="property">arrived</span>(false) {}
+  <span class="keyword">virtual</span> ~<span class="class-name">Ant</span>() = <span class="number">default</span>;
+};
+
+<span class="keyword">class</span> <span class="class-name">AntColony</span> {
+<span class="keyword">public</span>:
+  <span class="type">int</span> <span class="property">num_ants</span>;
+  <span class="type">std::vector</span><<span class="type">std::unique_ptr</span><<span class="class-name">Ant</span>>> <span class="property">ants</span>;
+  <span class="class-name">AntColony</span>(<span class="type">int</span> n) : <span class="property">num_ants</span>(n) {}
+  <span class="keyword">virtual</span> ~<span class="class-name">AntColony</span>() = <span class="number">default</span>;
+
+  <span class="comment">// Template method: main simulation loop</span>
+  <span class="keyword">virtual</span> <span class="type">void</span> <span class="function">simulate</span>() {
+    <span class="type">int</span> step = 0;
+    <span class="keyword">while</span> (!is_finished()) {
+      ++step;
+      before_step();
+      <span class="keyword">for</span> (<span class="type">int</span> i = num_ants - 1; i >= 0; --i)
+        move_ant(i);
+      print_state(step);
+      after_step();
+    }
+    print_summary(step);
+  }
+
+  <span class="comment">// Hooks for derived classes</span>
+  <span class="keyword">virtual</span> <span class="type">void</span> <span class="function">move_ant</span>(<span class="type">int</span> i) = 0;
+  <span class="keyword">virtual</span> <span class="type">bool</span> <span class="function">is_finished</span>() = 0;
+  <span class="keyword">virtual</span> <span class="type">void</span> <span class="function">print_state</span>(<span class="type">int</span> step) {}
+  <span class="keyword">virtual</span> <span class="type">void</span> <span class="function">before_step</span>() {}
+  <span class="keyword">virtual</span> <span class="type">void</span> <span class="function">after_step</span>() {}
+  <span class="keyword">virtual</span> <span class="type">void</span> <span class="function">print_summary</span>(<span class="type">int</span> step) {
+    std::cout << "\nSimulation finished in " << step << " steps.\n";
+  }
+};
+              </pre>
+            </div>
+          </div>
+          <div class="ide-card usage-card">
+            <div class="ide-card-header">
+              <div class="ide-dot red"></div>
+              <div class="ide-dot yellow"></div>
+              <div class="ide-dot green"></div>
+              <span class="ide-card-title">Refactoring summary</span>
+            </div>
+            <div class="ide-card-content">
+              <pre class="code-block markdown">
+<span class="md-heading"># Refactoring: Common Header &amp; Template Method</span>
+
+<span class="md-bullet">•</span> <span class="md-text">**Common header elements** : All algorithms now inherit from shared base classes (<b>Ant</b>, <b>AntColony</b>), which define the common data and interface for ants and colonies.</span>
+<span class="md-bullet">•</span> <span class="md-text">**Template method pattern** : The main simulation loop is implemented once in the base class (<b>simulate()</b>), which calls virtual "hook" methods for algorithm-specific behavior. This enforces a consistent structure and eliminates code duplication.</span>
+<span class="md-bullet">•</span> <span class="md-text">**Specialized methods in derived classes** : Each algorithm only implements what is unique to it by overriding methods like <b>move_ant</b>, <b>is_finished</b>, and <b>print_state</b>. This makes the codebase more modular, maintainable, and extensible.</span>
+              </pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
     <button class="nav-arrow left" id="prevBtn">&#8592;</button>
     <button class="nav-arrow right" id="nextBtn">&#8594;</button>
   </div>
